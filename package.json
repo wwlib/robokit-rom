@@ -1,0 +1,35 @@
+{
+  "name": "robokit-rom",
+  "version": "0.0.1",
+  "description": "Robokit Remote Operation Mode library",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npm run clean && tsc && webpack",
+    "build:lib": "npm run clean && tsc",
+    "test": "jest",
+    "test:js": "",
+    "clean": "shx rm -rf lib lib-esm dist",
+    "docs": "shx rm -rf docs/doc && typedoc --out docs/doc --options typedoc.json src/index.ts"
+  },
+  "keywords": [
+    "robokit"
+  ],
+  "author": "Andrew Rapo",
+  "license": "MIT",
+  "dependencies": {
+    "@jibo/apptoolkit-library": "^0.1.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.3",
+    "@types/node": "^13.7.7",
+    "dts-bundle": "^0.7.3",
+    "jest": "^25.1.0",
+    "shx": "^0.3.2",
+    "source-map-loader": "^0.2.4",
+    "ts-jest": "^25.2.1",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.8.3",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
+  }
+}

@@ -1,0 +1,10 @@
+dts-bundle-plugin.js
+docs
+lib
+notebooks
+test
+test-js
+src
+tsconfig.json
+typedoc.json
+webpack.config.js

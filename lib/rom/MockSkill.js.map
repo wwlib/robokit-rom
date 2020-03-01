@@ -1,0 +1,1 @@
+{"version":3,"file":"MockSkill.js","sourceRoot":"","sources":["../../src/rom/MockSkill.ts"],"names":[],"mappings":";;AAAA,mCAA4B;AAG5B,MAAqB,SAAU,SAAQ,eAAK;IAExC,YAAY,KAAY;QACpB,KAAK,CAAC,KAAK,EAAE,WAAW,EAAE,YAAY,CAAC,CAAC;IAC5C,CAAC;IAED,MAAM,CAAC,IAAsB;IAE7B,CAAC;IAED,IAAI,CAAC,SAAiB,EAAE,WAAmB;IAE3C,CAAC;CACJ;AAbD,4BAaC"}

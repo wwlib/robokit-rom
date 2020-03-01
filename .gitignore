@@ -1,0 +1,8 @@
+.ipynb_checkpoints
+.vscode
+hide
+node_modules
+.DS_Store
+notebooks/data/generated
+test/data/generated
+.vs
