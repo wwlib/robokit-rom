@@ -17,7 +17,8 @@
   "author": "Andrew Rapo",
   "license": "MIT",
   "dependencies": {
-    "@jibo/apptoolkit-library": "^0.1.5"
+    "@jibo/apptoolkit-library": "^0.1.5",
+    "neo4j-driver": "^4.0.1"
   },
   "devDependencies": {
     "@types/jest": "^25.1.3",

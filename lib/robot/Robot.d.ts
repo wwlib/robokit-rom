@@ -53,7 +53,7 @@ export default class Robot extends EventEmitter {
     private _faceTrackToken;
     private _stateData;
     private _keepAliveInterval;
-    constructor(options?: any);
+    constructor(options?: RobotData);
     get type(): string;
     set type(typeString: string);
     initWithData(data: RobotData): void;

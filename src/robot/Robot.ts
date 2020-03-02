@@ -73,7 +73,7 @@ export default class Robot extends EventEmitter {
     private _stateData: any
     private _keepAliveInterval: any;
 
-    constructor(options?: any) {
+    constructor(options?: RobotData) {
         super();
         options = options || {
             type: this.type,
