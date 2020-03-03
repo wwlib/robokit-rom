@@ -22,8 +22,7 @@
         "skipLibCheck": true
     },
     "include":[
-        "src/**/*.ts",
-        "typings/index.d.ts"
+        "src/**/*.ts"
     ],
     "exclude":[
         "dist",

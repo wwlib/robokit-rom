@@ -4,7 +4,7 @@
   "description": "Robokit Remote Operation Mode library",
   "main": "dist/index.js",
   "scripts": {
-    "build": "npm run clean && tsc && webpack",
+    "build": "npm run clean && tsc -p tsconfig.build.json && webpack",
     "build:lib": "npm run clean && tsc",
     "test": "jest",
     "test:js": "",
