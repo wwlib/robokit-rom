@@ -5,6 +5,8 @@ notebooks
 test
 test-js
 src
+jest.config.js
 tsconfig.json
+tsconfig.build.json
 typedoc.json
 webpack.config.js
