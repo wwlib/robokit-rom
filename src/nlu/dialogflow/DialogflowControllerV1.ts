@@ -59,9 +59,9 @@ export default class DialogflowControllerV1 extends NLUController {
     }
 
     set config(config: any) {
-        if (config && config.nluDialogflow_clientToken) {
+        if (config && config.nluDialogflowClientToken) {
             this._config = config;
-            this.apiAuthorization= `Bearer ${this._config.nluDialogflow_clientToken}`;
+            this.apiAuthorization= `Bearer ${this._config.nluDialogflowClientToken}`;
         }  else {
             console.log(`DialogflowControllerV1: set config: error: incomplete config:`, config);
         }

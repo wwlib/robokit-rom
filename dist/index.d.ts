@@ -9,7 +9,23 @@ declare module 'robokit-rom' {
     import RomCommand, { RomCommandData } from 'robokit-rom/rom/RomCommand';
     import RomCommands from 'robokit-rom/rom/RomCommands';
     import Robot, { RobotData, RobotType, RobotIntentData, RobotIntent, RobotIntentType } from 'robokit-rom/robot/Robot';
-    export { sum, IRomApp, RomCommand, RomCommandData, RomCommands, Robot, RobotData, RobotType, RobotIntentData, RobotIntent, RobotIntentType };
+    import Robots from 'robokit-rom/robot/Robots';
+    import RobotGroup from 'robokit-rom/robot/RobotGroup';
+    import RobotGroups from 'robokit-rom/robot/RobotGroups';
+    import RobokitRobot from 'robokit-rom/robot/RobokitRobot';
+    import RobokitConnection from 'robokit-rom/robot/RobokitConnection';
+    import AsyncToken from 'robokit-rom/robot/AsyncToken';
+    import AsyncTokenHotword from 'robokit-rom/robot/AsyncTokenHotword';
+    import Skill from 'robokit-rom/rom/Skill';
+    import EnsembleSkill from 'robokit-rom/rom/EnsembleSkill';
+    import EnsembleSkillManager from 'robokit-rom/rom/EnsembleSkillManager';
+    import Transaction from 'robokit-rom/rom/Transaction';
+    import TransactionFactory from 'robokit-rom/rom/TransactionFactory';
+    import NLUController from 'robokit-rom/rom/NLUController';
+    import DialogflowControllerV1 from 'robokit-rom/nlu/dialogflow/DialogflowControllerV1';
+    import LUISController from 'robokit-rom/nlu/luis/LUISController';
+    import PersistenceManager from 'robokit-rom/rom/PersistenceManager';
+    export { sum, IRomApp, RomCommand, RomCommandData, RomCommands, Robot, RobotData, RobotType, RobotIntentData, RobotIntent, RobotIntentType, Robots, RobotGroup, RobotGroups, RobokitRobot, RobokitConnection, AsyncToken, AsyncTokenHotword, Skill, EnsembleSkill, EnsembleSkillManager, Transaction, TransactionFactory, NLUController, DialogflowControllerV1, LUISController, PersistenceManager };
 }
 
 declare module 'robokit-rom/sum' {
@@ -139,42 +155,73 @@ declare module 'robokit-rom/robot/Robot' {
     }
 }
 
-declare module 'robokit-rom/rom/Hub' {
+declare module 'robokit-rom/robot/Robots' {
     import { EventEmitter } from "events";
-    import Skill from 'robokit-rom/rom/Skill';
+    import IRomApp from 'robokit-rom/rom/IRomApp';
+    import Robot, { RobotIntent } from 'robokit-rom/robot/Robot';
+    export default class Robots extends EventEmitter {
+        robotList: Robot[];
+        robotMap: Map<string, Robot>;
+        lastUpdateTime: number;
+        statusMessages: string;
+        constructor();
+        initWithData(dataList: any[]): void;
+        onRobotUpdated(robot: Robot): void;
+        onRobotStatusMessage(payload: any): void;
+        onRobotIntent(robotIntent: RobotIntent): void;
+        updateRobotsStatusMessages(message: string, subsystem?: string, clearMessages?: boolean): string;
+        get json(): any;
+        get robotNames(): string[];
+        get connectedRobots(): Robot[];
+        get targetedRobots(): Robot[];
+        get robotCount(): number;
+        getRobotWithName(name: string): Robot | undefined;
+        connectRobot(robot: Robot, romApp: IRomApp): void;
+        disconnectRobot(robot: Robot): void;
+        addRobot(robot: Robot): void;
+        removeRobot(robotToRemove: Robot): void;
+        onUpdateStats(robot: Robot): void;
+        getNextRobotInRobotList(robot: Robot): Robot;
+    }
+}
+
+declare module 'robokit-rom/robot/RobotGroup' {
+    export default class RobotGroup {
+        name: string;
+        robotList: string[];
+        constructor(name?: string);
+        initWithData(data: any): void;
+        get json(): any;
+        get robotNames(): string[];
+        addRobotName(name: string): void;
+        removeRobotName(robotNameToRemove: string): void;
+    }
+}
+
+declare module 'robokit-rom/robot/RobotGroups' {
+    import RobotGroup from 'robokit-rom/robot/RobotGroup';
+    export default class RobotGroups {
+        robotGroupsList: RobotGroup[];
+        robotGroupsMap: Map<string, RobotGroup>;
+        constructor();
+        initWithData(dataList: any[]): void;
+        get json(): any[];
+        get robotGroupNames(): string[];
+        getRobotGroupWithName(name: string): RobotGroup | undefined;
+        addRobotGroup(robotGroup: RobotGroup): void;
+        removeRobotGroup(robotGroupToRemove: RobotGroup): void;
+    }
+}
+
+declare module 'robokit-rom/robot/RobokitRobot' {
     import Robot from 'robokit-rom/robot/Robot';
-    import LUISController from 'robokit-rom/nlu/luis/LUISController';
-    import DialogflowControllerV1 from 'robokit-rom/nlu/dialogflow/DialogflowControllerV1';
-    export interface HotwordData {
-        listenResultEvent: JIBO.v1.ListenResultEvent;
-        speaker: any;
-    }
-    export interface NluData {
-        nluType: string;
-        asr: string;
-        intent: string;
-        parameters: any;
-    }
-    export default class Hub extends EventEmitter {
-        robot: Robot;
-        skillMap: Map<string, Skill | undefined>;
-        launchIntentMap: Map<string, Skill | undefined>;
-        hjToken: any;
-        dialogflowController: DialogflowControllerV1;
-        luisController: LUISController;
-        tickInterval: any;
-        startTickTime: number;
-        previousTickTime: number;
-        sessionId: string;
-        constructor(robot: Robot);
-        tick(): void;
-        onRobotConnected(): void;
-        registerSkill(skill: Skill): void;
-        removeSkill(skill: Skill): void;
-        onHotwordEvent(hotwordData: HotwordData): void;
-        getLaunchIntent(asr: string): Promise<any>;
-        getIntent(asr: string, contexts: string[], nluType: string): Promise<NluData>;
-        get robotSerialName(): string;
+    import IRomApp from 'robokit-rom/rom/IRomApp';
+    import RomCommand from 'robokit-rom/rom/RomCommand';
+    export default class RobokitRobot extends Robot {
+        constructor(options?: any);
+        sendCommand(command: RomCommand): void;
+        connect(romApp: IRomApp): void;
+        keepAlive(): void;
     }
 }
 
@@ -213,6 +260,23 @@ declare module 'robokit-rom/robot/RobokitConnection' {
     }
 }
 
+declare module 'robokit-rom/robot/AsyncToken' {
+    import { EventEmitter } from 'events';
+    export default class AsyncToken<T> extends EventEmitter {
+        complete: Promise<T> | undefined;
+        update: any;
+        constructor();
+    }
+}
+
+declare module 'robokit-rom/robot/AsyncTokenHotword' {
+    import AsyncToken from 'robokit-rom/robot/AsyncToken';
+    export default class AsyncTokenHotword<T> extends AsyncToken<any> {
+        hotWordHeard: any;
+        constructor();
+    }
+}
+
 declare module 'robokit-rom/rom/Skill' {
     import Robot, { RobotIntentData } from 'robokit-rom/robot/Robot';
     export default abstract class Skill {
@@ -226,39 +290,81 @@ declare module 'robokit-rom/rom/Skill' {
     }
 }
 
-declare module 'robokit-rom/nlu/luis/LUISController' {
-    import NLUController, { NLUIntentAndEntities } from 'robokit-rom/rom/NLUController';
-    export type LUISIntent = {
-        intent: string;
-        score: number;
-    };
-    export type LUISEntity = {
-        entity: string;
+declare module 'robokit-rom/rom/EnsembleSkill' {
+    import Hub from 'robokit-rom/rom/Hub';
+    import Skill from 'robokit-rom/rom/Skill';
+    export default abstract class EnsembleSkill extends Skill {
+        hubMap: Map<string, Hub>;
+        protected constructor(id: string, launchIntent: string);
+        addHub(hub: Hub): void;
+        getShuffledArrayOfHubs(): any[];
+        shuffleInPlace<T>(array: T[]): T[];
+        getRandomInt(min: number, max: number): number;
+    }
+}
+
+declare module 'robokit-rom/rom/EnsembleSkillManager' {
+    import EnsembleSkill from 'robokit-rom/rom/EnsembleSkill';
+    export default class EnsembleSkillManager {
+        ensembleSkillMap: Map<string, EnsembleSkill>;
+        static get Instance(): EnsembleSkillManager;
+        addEnsembleSkill(ensembleSkill: EnsembleSkill): void;
+        getEnsembleSkillWithId(id: string): EnsembleSkill | undefined;
+    }
+}
+
+declare module 'robokit-rom/rom/Transaction' {
+    import { EventEmitter } from 'events';
+    export type TransactionMessageData = {
+        client?: string;
+        id: number;
         type: string;
-        startIndex: number;
-        endIndex: number;
-        resolution: {
-            values: string[];
-        };
+        data: any;
+        sendTime: number;
     };
-    export type LUISResponse = {
-        query: string;
-        topScoringIntent: LUISIntent;
-        intents: LUISIntent[];
-        entities: LUISEntity[];
+    export default class Transaction extends EventEmitter {
+        id: string;
+        robotSerialName: string;
+        status: string;
+        type: string;
+        data: any;
+        sendTime: number;
+        receiptTime: number;
+        commandReceivedTime: number;
+        commandCompletedTime: number;
+        receiptPayload: any;
+        constructor(id: string, type: string, data: any, robotSerialName: string);
+        getMessageDataToSend(): TransactionMessageData;
+        getMessageDataToLog(): any;
+        onReceipt(payload: any): void;
+        destroy(): void;
+    }
+}
+
+declare module 'robokit-rom/rom/TransactionFactory' {
+    import Transaction from 'robokit-rom/rom/Transaction';
+    export default class TransactionFactory {
+        static transactions: Map<string, Transaction>;
+        static lastId: number;
+        static init(): void;
+        static getNextId(): string;
+        static createTransaction(type: string, data: any, robotSerialName: string): Transaction;
+        static receiveTransaction(payload: any, status: string): Transaction | undefined;
+        static destroyTransaction(transaction: Transaction): void;
+    }
+}
+
+declare module 'robokit-rom/rom/NLUController' {
+    export type NLUIntentAndEntities = {
+        intent: string;
+        entities: any;
     };
-    export default class LUISController extends NLUController {
-        endpoint: string;
-        luisAppId: string;
-        subscriptionKey: string;
-        /**
-          * @constructor
-          */
+    export default abstract class NLUController {
         constructor();
-        set config(config: any);
-        call(query: string): Promise<any>;
-        getEntitiesWithResponse(response: LUISResponse): any;
-        getIntentAndEntities(query: string, languageCode: string, context: string, sessionId?: string): Promise<NLUIntentAndEntities>;
+        abstract set config(config: any);
+        abstract call(query: string, languageCode: string, context: string, sessionId?: string): Promise<any>;
+        abstract getEntitiesWithResponse(response: any): any | undefined;
+        abstract getIntentAndEntities(query: string, languageCode: string, context: string, sessionId?: string): Promise<NLUIntentAndEntities>;
     }
 }
 
@@ -311,62 +417,133 @@ declare module 'robokit-rom/nlu/dialogflow/DialogflowControllerV1' {
     }
 }
 
-declare module 'robokit-rom/robot/AsyncToken' {
-    import { EventEmitter } from 'events';
-    export default class AsyncToken<T> extends EventEmitter {
-        complete: Promise<T> | undefined;
-        update: any;
-        constructor();
-    }
-}
-
-declare module 'robokit-rom/robot/AsyncTokenHotword' {
-    import AsyncToken from 'robokit-rom/robot/AsyncToken';
-    export default class AsyncTokenHotword<T> extends AsyncToken<any> {
-        hotWordHeard: any;
-        constructor();
-    }
-}
-
-declare module 'robokit-rom/rom/Transaction' {
-    import { EventEmitter } from 'events';
-    export type TransactionMessageData = {
-        client?: string;
-        id: number;
-        type: string;
-        data: any;
-        sendTime: number;
-    };
-    export default class Transaction extends EventEmitter {
-        id: string;
-        robotSerialName: string;
-        status: string;
-        type: string;
-        data: any;
-        sendTime: number;
-        receiptTime: number;
-        commandReceivedTime: number;
-        commandCompletedTime: number;
-        receiptPayload: any;
-        constructor(id: string, type: string, data: any, robotSerialName: string);
-        getMessageDataToSend(): TransactionMessageData;
-        getMessageDataToLog(): any;
-        onReceipt(payload: any): void;
-        destroy(): void;
-    }
-}
-
-declare module 'robokit-rom/rom/NLUController' {
-    export type NLUIntentAndEntities = {
+declare module 'robokit-rom/nlu/luis/LUISController' {
+    import NLUController, { NLUIntentAndEntities } from 'robokit-rom/rom/NLUController';
+    export type LUISIntent = {
         intent: string;
-        entities: any;
+        score: number;
     };
-    export default abstract class NLUController {
+    export type LUISEntity = {
+        entity: string;
+        type: string;
+        startIndex: number;
+        endIndex: number;
+        resolution: {
+            values: string[];
+        };
+    };
+    export type LUISResponse = {
+        query: string;
+        topScoringIntent: LUISIntent;
+        intents: LUISIntent[];
+        entities: LUISEntity[];
+    };
+    export default class LUISController extends NLUController {
+        endpoint: string;
+        luisAppId: string;
+        subscriptionKey: string;
+        /**
+          * @constructor
+          */
         constructor();
-        abstract set config(config: any);
-        abstract call(query: string, languageCode: string, context: string, sessionId?: string): Promise<any>;
-        abstract getEntitiesWithResponse(response: any): any | undefined;
-        abstract getIntentAndEntities(query: string, languageCode: string, context: string, sessionId?: string): Promise<NLUIntentAndEntities>;
+        set config(config: any);
+        call(query: string): Promise<any>;
+        getEntitiesWithResponse(response: LUISResponse): any;
+        getIntentAndEntities(query: string, languageCode: string, context: string, sessionId?: string): Promise<NLUIntentAndEntities>;
+    }
+}
+
+declare module 'robokit-rom/rom/PersistenceManager' {
+    import Neo4jController, { GraphConnection } from 'robokit-rom/graph/neo4j/Neo4jController';
+    import IRomApp from 'robokit-rom/rom/IRomApp';
+    import Robot from 'robokit-rom/robot/Robot';
+    import { Joke } from 'robokit-rom/rom/JokeSkill';
+    export default class PersistenceManager {
+        romApp: IRomApp | undefined;
+        neo4jController: Neo4jController | undefined;
+        graphConnection: GraphConnection | undefined;
+        static get Instance(): PersistenceManager;
+        connect(romApp: IRomApp, force?: boolean): void;
+        persistLaunchIntent(robotId: string, userId: string, intent: string, launchId: string): void;
+        getActivity(robotId: string): Promise<string[]>;
+        persistJoke(robot: Robot, joke: Joke, launchId: string): void;
+        persistUserLikesThing(robot: Robot, thing: string, launchId: string, userId: string): void;
+    }
+}
+
+declare module 'robokit-rom/rom/Hub' {
+    import { EventEmitter } from "events";
+    import Skill from 'robokit-rom/rom/Skill';
+    import Robot from 'robokit-rom/robot/Robot';
+    import LUISController from 'robokit-rom/nlu/luis/LUISController';
+    import DialogflowControllerV1 from 'robokit-rom/nlu/dialogflow/DialogflowControllerV1';
+    export interface HotwordData {
+        listenResultEvent: JIBO.v1.ListenResultEvent;
+        speaker: any;
+    }
+    export interface NluData {
+        nluType: string;
+        asr: string;
+        intent: string;
+        parameters: any;
+    }
+    export default class Hub extends EventEmitter {
+        robot: Robot;
+        skillMap: Map<string, Skill | undefined>;
+        launchIntentMap: Map<string, Skill | undefined>;
+        hjToken: any;
+        dialogflowController: DialogflowControllerV1;
+        luisController: LUISController;
+        tickInterval: any;
+        startTickTime: number;
+        previousTickTime: number;
+        sessionId: string;
+        constructor(robot: Robot);
+        tick(): void;
+        onRobotConnected(): void;
+        registerSkill(skill: Skill): void;
+        removeSkill(skill: Skill): void;
+        onHotwordEvent(hotwordData: HotwordData): void;
+        getLaunchIntent(asr: string): Promise<any>;
+        getIntent(asr: string, contexts: string[], nluType: string): Promise<NluData>;
+        get robotSerialName(): string;
+    }
+}
+
+declare module 'robokit-rom/graph/neo4j/Neo4jController' {
+    export type GraphConnection = {
+        type?: string;
+        url: string;
+        user: string;
+        password: string;
+        initialCypher?: string;
+    };
+    export default class Neo4jController {
+        driver: any;
+        constructor(connection: GraphConnection);
+        call(cypher: string, params?: any): Promise<any>;
+        getCypherAsD3(cypher: string, params?: any): Promise<any>;
+        getNodesAndRelationships(limit?: number): Promise<any>;
+        getNodesWithPropertyAndValue(property: string, value: string): Promise<any>;
+        test(): void;
+    }
+}
+
+declare module 'robokit-rom/rom/JokeSkill' {
+    import Skill from 'robokit-rom/rom/Skill';
+    import Robot, { RobotIntentData } from 'robokit-rom/robot/Robot';
+    export type Joke = {
+        id: string;
+        name: string;
+        prompt: string;
+    };
+    export default class JokeSkill extends Skill {
+        jokeMap: Map<string, Joke>;
+        jokeIterator: Iterator<Joke>;
+        constructor(robot: Robot);
+        initJokes(): void;
+        launch(data: RobotIntentData): void;
+        tick(frameTime: number, elapsedTime: number): void;
     }
 }
 

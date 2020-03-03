@@ -6,8 +6,8 @@ import NLUController, {
     NLUIntentAndEntities
 } from './NLUController';
 import LUISController from '../nlu/luis/LUISController';
-// import DialogflowControllerV1 from '../dialogflow/DialogflowControllerV1';
 import DialogflowControllerV1 from '../nlu/dialogflow/DialogflowControllerV1';
+// import DialogflowControllerV2 from '../nlu/dialogflow/DialogflowControllerV2';
 
 import PersistenceManager from './PersistenceManager';
 

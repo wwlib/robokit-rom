@@ -67,12 +67,12 @@ export default class DialogflowControllerV2 extends NLUController {
   }
 
   set config(config: any) {
-      if (config && config.nluDialogflow_privateKey && config.nluDialogflow_clientEmail) {
+      if (config && config.nluDialogflowPrivateKey && config.nluDialogflowClientEmail) {
           this._config = config;
           let clientConfig: any = {
               credentials: {
-                  private_key: this._config.nluDialogflow_privateKey,
-                  client_email: this._config.nluDialogflow_clientEmail
+                  private_key: this._config.nluDialogflowPrivateKey,
+                  client_email: this._config.nluDialogflowClientEmail
               }
           }
           // console.log(`DialogflowControllerV2: constructor: config:`, config);
