@@ -1,6 +1,6 @@
 import {EventEmitter} from "events";
 import Skill from './Skill';
-import Robot, { RobotIntentData } from '../robot/Robot';
+import Robot, { RobotIntentData, RobotDataStreamEvent } from '../robot/Robot';
 
 import NLUController, {
     NLUIntentAndEntities
@@ -99,6 +99,10 @@ export default class Hub extends EventEmitter {
             this.registerSkill(clockEnsembleSkill);
             clockEnsembleSkill.addHub(this);
         }
+    }
+
+    onRobotDataStreamEvent(event: RobotDataStreamEvent) {
+        this.emit('dataStreamEvent', event);
     }
 
     registerSkill(skill: Skill): void {

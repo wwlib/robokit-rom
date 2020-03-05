@@ -7,7 +7,6 @@ export default class Robots extends EventEmitter {
     robotMap: Map<string, Robot>;
     lastUpdateTime: number;
     statusMessages: string;
-    private _nextRobotNumber;
     private _robotUpdatedHandler;
     private _robotStatusMessageUpdateHandler;
     private _robotIntentHandler;

@@ -50,6 +50,12 @@ export interface RobotIntent {
     data: RobotIntentData;
 }
 
+export interface RobotDataStreamEvent {
+    robotId: string;
+    type: string;
+    data: any;
+}
+
 export default class Robot extends EventEmitter {
 
     private _type: string = 'jibo';
@@ -374,6 +380,13 @@ export default class Robot extends EventEmitter {
                                 if (detectedEntities.length > 0) {
                                     var id: number = detectedEntities[0].EntityID;
                                     console.log(`detectedFaces: gained: count: ${detectedEntities.length}, id: ${id}`, detectedEntities);
+                                    if (this._hub) {
+                                        this._hub.onRobotDataStreamEvent({
+                                            robotId: this.serialName,
+                                            type: 'faceGained',
+                                            data: detectedEntities
+                                        });
+                                    }
                                 }
 
                             });
@@ -381,6 +394,13 @@ export default class Robot extends EventEmitter {
                                 if (updatedEntities.length > 0) {
                                     var id: number = updatedEntities[0].EntityID;
                                     console.log(`detectedFaces: update: count: ${updatedEntities.length}, id: ${id}`, updatedEntities);
+                                    if (this._hub) {
+                                        this._hub.onRobotDataStreamEvent({
+                                            robotId: this.serialName,
+                                            type: 'faceUpdated',
+                                            data: updatedEntities
+                                        });
+                                    }
                                 }
                             });
                         } else if (command.data.state == 'OFF') {

@@ -11,7 +11,6 @@ export default class Robots extends EventEmitter {
     public lastUpdateTime: number = 0;
     public statusMessages: string;
 
-    private _nextRobotNumber: number = 0;
     private _robotUpdatedHandler: any = this.onRobotUpdated.bind(this);
     private _robotStatusMessageUpdateHandler: any = this.onRobotStatusMessage.bind(this);
     private _robotIntentHandler: any = this.onRobotIntent.bind(this);
@@ -104,7 +103,7 @@ export default class Robots extends EventEmitter {
     }
 
     get robotCount(): number {
-        return this._nextRobotNumber;
+        return this.robotList.length;
     }
 
     getRobotWithName(name: string): Robot | undefined {
@@ -160,7 +159,7 @@ export default class Robots extends EventEmitter {
     }
 
     getNextRobotInRobotList(robot: Robot): Robot {
-      let result: Robot = this.robotList[1]; // skip <SIMULATOR> at index 0
+      let result: Robot = this.robotList[0];
       let index: number = this.robotList.indexOf(robot);
       if(index >= 0 && index < this.robotList.length - 1) {
          result = this.robotList[index + 1]

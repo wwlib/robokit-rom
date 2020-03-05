@@ -2,7 +2,8 @@ import { sum } from './sum';
 import IRomApp from './rom/IRomApp';
 import RomCommand, { RomCommandData } from './rom/RomCommand';
 import RomCommands from './rom/RomCommands';
-import Robot, { RobotData, RobotType, RobotIntentData, RobotIntent, RobotIntentType } from './robot/Robot';
+import Hub from './rom/Hub';
+import Robot, { RobotData, RobotType, RobotIntentData, RobotIntent, RobotIntentType, RobotDataStreamEvent } from './robot/Robot';
 import Robots from './robot/Robots';
 import RobotGroup from './robot/RobotGroup';
 import RobotGroups from './robot/RobotGroups';
@@ -26,12 +27,14 @@ export {
     RomCommand,
     RomCommandData,
     RomCommands,
+    Hub,
     Robot,
     RobotData,
     RobotType,
     RobotIntentData,
     RobotIntent,
     RobotIntentType,
+    RobotDataStreamEvent,
     Robots,
     RobotGroup,
     RobotGroups,

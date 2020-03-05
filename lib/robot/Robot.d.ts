@@ -35,6 +35,11 @@ export interface RobotIntent {
     type: RobotIntentType;
     data: RobotIntentData;
 }
+export interface RobotDataStreamEvent {
+    robotId: string;
+    type: string;
+    data: any;
+}
 export default class Robot extends EventEmitter {
     private _type;
     name: string;

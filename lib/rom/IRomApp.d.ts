@@ -3,7 +3,7 @@ export default interface IRomApp {
     nluDefault: string;
     clientId: string;
     clientSecret: string;
-    neo4j_url: string;
-    neo4j_user: string;
-    neo4j_password: string;
+    neo4jUrl?: string;
+    neo4jUser?: string;
+    neo4jPassword?: string;
 }

@@ -2,7 +2,7 @@
 /// <reference types="node" />
 import { EventEmitter } from "events";
 import Skill from './Skill';
-import Robot from '../robot/Robot';
+import Robot, { RobotDataStreamEvent } from '../robot/Robot';
 import LUISController from '../nlu/luis/LUISController';
 import DialogflowControllerV1 from '../nlu/dialogflow/DialogflowControllerV1';
 export interface HotwordData {
@@ -29,6 +29,7 @@ export default class Hub extends EventEmitter {
     constructor(robot: Robot);
     tick(): void;
     onRobotConnected(): void;
+    onRobotDataStreamEvent(event: RobotDataStreamEvent): void;
     registerSkill(skill: Skill): void;
     removeSkill(skill: Skill): void;
     onHotwordEvent(hotwordData: HotwordData): void;

@@ -38,12 +38,12 @@ export default class PersistenceManager {
     public connect(romApp: IRomApp, force: boolean=false): void {
         console.log(`PersistenceManager: connect: `, romApp);
         this.romApp = romApp;
-        if (this.romApp && this.romApp.neo4j_url && (!this.neo4jController || force)) {
+        if (this.romApp && this.romApp.neo4jUrl && this.romApp.neo4jUser && this.romApp.neo4jPassword && (!this.neo4jController || force)) {
             this.graphConnection = {
                 type: 'neo4j',
-                url: this.romApp.neo4j_url,
-                user: this.romApp.neo4j_user,
-                password: this.romApp.neo4j_password
+                url: this.romApp.neo4jUrl,
+                user: this.romApp.neo4jUser,
+                password: this.romApp.neo4jPassword
             }
             console.log(`PersistenceManager: connect: instantiating Neo4jController:`, this.graphConnection);
             this.neo4jController = new Neo4jController(this.graphConnection);
