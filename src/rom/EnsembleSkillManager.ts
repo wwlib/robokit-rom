@@ -26,4 +26,18 @@ export default class EnsembleSkillManager {
     getEnsembleSkillWithId(id: string): EnsembleSkill | undefined {
         return this.ensembleSkillMap.get(id);
     }
+
+    getEnsembleSkills(): EnsembleSkill[] {
+        const skills: EnsembleSkill[] = Array.from( this.ensembleSkillMap.values());
+        return skills;
+    }
+
+    status(): any {
+        const skills: EnsembleSkill[] = Array.from( this.ensembleSkillMap.values());
+        const data: any[] = [];
+        skills.forEach((skill: EnsembleSkill) => {
+            data.push(skill.status());
+        });
+        return data;
+    }
 }

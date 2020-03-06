@@ -5,6 +5,7 @@ export default abstract class Skill {
     launchIntent: string;
     running: boolean;
     constructor(robot: Robot | undefined, id: string, launchIntent: string);
+    status(): any;
     abstract launch(data?: RobotIntentData): void;
     abstract tick(frameTime: number, elapsedTime: number): void;
 }

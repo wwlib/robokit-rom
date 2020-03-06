@@ -104,6 +104,10 @@ export default class Robot extends EventEmitter {
         this._type = typeString;
     }
 
+    get hub(): Hub {
+        return this._hub;
+    }
+
     initWithData(data: RobotData): void {
         this.type = data.type || 'jibo';
         this.name = data.name;
@@ -373,13 +377,14 @@ export default class Robot extends EventEmitter {
                     break;
                 case "faces":
                     if (!this._muted && command.data && command.data.state) {
+                        console.log(`faces: ${command.data.state}`);
                         if (command.data.state == 'ON') {
-
                             this._faceTrackToken = this._robotConnection.requester.perception.subscribe.face() //this._requester.faceTrack.trackFaces();
                             this._faceTrackToken.gained.on((detectedEntities: any) => {
                                 if (detectedEntities.length > 0) {
-                                    var id: number = detectedEntities[0].EntityID;
-                                    console.log(`detectedFaces: gained: count: ${detectedEntities.length}, id: ${id}`, detectedEntities);
+                                    // var id: number = detectedEntities[0].EntityID;
+                                    // console.log(`detectedFaces: gained: count: ${detectedEntities.length}, id: ${id}`, detectedEntities);
+                                    console.log(`detectedFaces: gained: count: ${detectedEntities.length}`);
                                     if (this._hub) {
                                         this._hub.onRobotDataStreamEvent({
                                             robotId: this.serialName,
@@ -392,8 +397,8 @@ export default class Robot extends EventEmitter {
                             });
                             this._faceTrackToken.update.on((updatedEntities: any) => {
                                 if (updatedEntities.length > 0) {
-                                    var id: number = updatedEntities[0].EntityID;
-                                    console.log(`detectedFaces: update: count: ${updatedEntities.length}, id: ${id}`, updatedEntities);
+                                    // var id: number = updatedEntities[0].EntityID;
+                                    // console.log(`detectedFaces: update: count: ${updatedEntities.length}, id: ${id}`, updatedEntities);
                                     if (this._hub) {
                                         this._hub.onRobotDataStreamEvent({
                                             robotId: this.serialName,
@@ -573,16 +578,20 @@ export default class Robot extends EventEmitter {
         return this._targeted;
     }
 
+    set targeted(value: boolean) {
+        this._targeted = value;
+    }
+
+    toggleTargeted(): void {
+        this._targeted = !this._targeted;
+    }
+
     get requester(): any | undefined {
         let result: any;
         if (this._robotConnection) {
             result = this._robotConnection.requester;
         }
         return result;
-    }
-
-    toggleTargeted(): void {
-        this._targeted = !this._targeted;
     }
 
     mute(state: boolean = true): void {

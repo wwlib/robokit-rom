@@ -14,6 +14,20 @@ export default abstract class Skill {
         this.launchIntent = launchIntent;
     }
 
+    status(): any {
+        let robotName: string = '';
+        if (this.robot) {
+            robotName = this.robot.name;
+        }
+        return {
+            type: 'skill',
+            robotName: robotName,
+            id: this.id,
+            launchIntent: this.launch,
+            running: this.running,
+        }
+    }
+
     abstract launch(data?: RobotIntentData): void;
 
     abstract tick(frameTime: number, elapsedTime: number): void;

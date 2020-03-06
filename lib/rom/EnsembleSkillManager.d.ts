@@ -6,4 +6,6 @@ export default class EnsembleSkillManager {
     static get Instance(): EnsembleSkillManager;
     addEnsembleSkill(ensembleSkill: EnsembleSkill): void;
     getEnsembleSkillWithId(id: string): EnsembleSkill | undefined;
+    getEnsembleSkills(): EnsembleSkill[];
+    status(): any;
 }

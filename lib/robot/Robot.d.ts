@@ -61,6 +61,7 @@ export default class Robot extends EventEmitter {
     constructor(options?: RobotData);
     get type(): string;
     set type(typeString: string);
+    get hub(): Hub;
     initWithData(data: RobotData): void;
     updateRobotStatusMessages(message: string, subsystem?: string, clearMessages?: boolean): string;
     get number(): number;
@@ -83,7 +84,8 @@ export default class Robot extends EventEmitter {
     disconnect(): void;
     get connected(): boolean;
     get targeted(): boolean;
-    get requester(): any | undefined;
+    set targeted(value: boolean);
     toggleTargeted(): void;
+    get requester(): any | undefined;
     mute(state?: boolean): void;
 }

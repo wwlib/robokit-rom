@@ -102,6 +102,9 @@ export default class Hub extends EventEmitter {
     }
 
     onRobotDataStreamEvent(event: RobotDataStreamEvent) {
+        // if (event && event.type === 'faceGained') {
+        //     console.log(`onRobotDataStreamEvent: ${event.type}`);
+        // }
         this.emit('dataStreamEvent', event);
     }
 
