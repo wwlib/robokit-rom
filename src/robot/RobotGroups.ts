@@ -2,36 +2,34 @@ import RobotGroup from './RobotGroup';
 
 export default class RobotGroups {
 
-    public robotGroupsList: RobotGroup[];
     public robotGroupsMap: Map<string, RobotGroup>;
 
     constructor() {
-        this.robotGroupsList = [];
         this.robotGroupsMap = new Map<string, RobotGroup>();
     }
 
     initWithData(dataList: any[]): void {
-        dataList.forEach((data: any) => {
-            let robotGroup: RobotGroup = new RobotGroup();
-            robotGroup.initWithData(data);
-            this.robotGroupsList.push(robotGroup);
-            this.robotGroupsMap.set(robotGroup.name, robotGroup);
-        })
+        if (dataList) {
+            dataList.forEach((data: any) => {
+                let robotGroup: RobotGroup = new RobotGroup();
+                robotGroup.initWithData(data);
+                this.addRobotGroup(robotGroup);
+            });
+        }
     }
 
     get json(): any[] {
         let json: any[] = [];
-        this.robotGroupsList.forEach(robotGroup => {
+        let groups: RobotGroup[] = Array.from(this.robotGroupsMap.values());
+        groups.forEach(robotGroup => {
             json.push(robotGroup.json);
         });
         return json;
     }
 
     get robotGroupNames(): string[] {
-        let names: string[] = [];
-        this.robotGroupsList.forEach(robotGroup => {
-            names.push(robotGroup.name);
-        });
+        let names: string[] = Array.from(this.robotGroupsMap.keys());
+        names.sort();
         return names;
     }
 
@@ -40,18 +38,10 @@ export default class RobotGroups {
     }
 
     addRobotGroup(robotGroup: RobotGroup): void {
-        this.robotGroupsList.push(robotGroup);
-        this.robotGroupsMap.set(robotGroup.name, robotGroup);
+        this.robotGroupsMap.set(robotGroup.name, robotGroup);        
     }
 
     removeRobotGroup(robotGroupToRemove: RobotGroup): void {
-        let tempRobotGroupsList: RobotGroup[] = [];
-        let tempRobotGroupsMap: Map<string, RobotGroup> = new Map<string, RobotGroup>();
-        this.robotGroupsList.forEach(robotGroup => {
-            if (robotGroup != robotGroupToRemove) {
-                tempRobotGroupsList.push(robotGroup);
-                tempRobotGroupsMap.set(robotGroup.name, robotGroup);
-            }
-        });
+        this.robotGroupsMap.delete(robotGroupToRemove.name);
     }
 }

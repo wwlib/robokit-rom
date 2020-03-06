@@ -1,6 +1,5 @@
 import RobotGroup from './RobotGroup';
 export default class RobotGroups {
-    robotGroupsList: RobotGroup[];
     robotGroupsMap: Map<string, RobotGroup>;
     constructor();
     initWithData(dataList: any[]): void;

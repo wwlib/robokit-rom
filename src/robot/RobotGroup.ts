@@ -14,6 +14,7 @@ export default class RobotGroup {
 
     initWithData(data: any): void {
         if (data && data.name && data.robots) {
+            this.name = data.name;
             let robotNames: string[] = data.robots;
             robotNames.forEach((robotName: string) => {
                 this.robotList.push(robotName);
@@ -24,12 +25,8 @@ export default class RobotGroup {
     get json(): any {
         let json: any = {
             name: this.name,
-            robots: []
+            robots:  this.robotList,
         };
-
-        this.robotList.forEach((robotName: string) => {
-            json.robots.push(robotName);
-        });
         return json;
     }
 
