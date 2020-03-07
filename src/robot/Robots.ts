@@ -1,12 +1,11 @@
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 import IRomApp from '../rom/IRomApp';
-import Robot, {RobotIntent, RobotType} from './Robot';
+import Robot, { RobotIntent, RobotType } from './Robot';
 import RobokitRobot from './RobokitRobot';
 
 export default class Robots extends EventEmitter {
 
-    public robotList: Robot[];
-    public robotMap: Map<string, Robot>;
+    private _robotMap: Map<string, Robot>;
 
     public lastUpdateTime: number = 0;
     public statusMessages: string;
@@ -17,8 +16,7 @@ export default class Robots extends EventEmitter {
 
     constructor() {
         super();
-        this.robotList = [];
-        this.robotMap = new Map<string, Robot>();
+        this._robotMap = new Map<string, Robot>();
         this.statusMessages = '';
     }
 
@@ -75,10 +73,7 @@ export default class Robots extends EventEmitter {
     }
 
     get robotNames(): string[] {
-        let names: string[] = [];
-        this.robotList.forEach(robot => {
-            names.push(robot.name);
-        });
+        const names: string[] = Array.from(this._robotMap.keys());
         return names;
     }
 
@@ -107,17 +102,28 @@ export default class Robots extends EventEmitter {
     }
 
     getRobotWithName(name: string): Robot | undefined {
-        return this.robotMap.get(name);
+        return this._robotMap.get(name);
+    }
+    get robotList(): Robot[] {
+        const robotList: Robot[] = Array.from(this._robotMap.values());
+        return robotList;
     }
 
-    // enableRobot(robot: Robot, romApp: IRomApp): void {
-    //     robot.enabled = true;
-    //
-    // }
-    //
-    // disableRobot(robot: Robot): void {
-    //     robot.enabled = false;
-    // }
+    getRobotListWithNames(names: string[]): Robot[] | undefined {
+        let result: Robot[] | undefined = undefined;
+        if (names && names.length > 0) {
+            names.forEach((name: string) => {
+                const robot: Robot | undefined = this._robotMap.get(name);
+                if (robot) {
+                    if (!result) {
+                        result = [];
+                    }
+                    result.push(robot);
+                }
+            });
+        }
+        return result;
+    }
 
     connectRobot(robot: Robot, romApp: IRomApp): void {
         robot.connect(romApp);
@@ -128,8 +134,7 @@ export default class Robots extends EventEmitter {
     }
 
     addRobot(robot: Robot): void {
-        this.robotList.push(robot);
-        this.robotMap.set(robot.name, robot);
+        this._robotMap.set(robot.name, robot);
         robot.on('updateRobot', this._robotUpdatedHandler);
         robot.on('statusMessage', this._robotStatusMessageUpdateHandler);
         robot.on('robotIntent', this._robotIntentHandler);
@@ -137,20 +142,14 @@ export default class Robots extends EventEmitter {
     }
 
     removeRobot(robotToRemove: Robot): void {
-        let tempRobotList: Robot[] = [];
-        let tempRobotMap: Map<string, Robot> = new Map<string, Robot>();
-        this.robotList.forEach(robot => {
-            if (robot != robotToRemove) {
-                tempRobotList.push(robot);
-                tempRobotMap.set(robot.name, robot);
-            }
-        });
-        this.robotList = tempRobotList;
-        this.robotMap = tempRobotMap;
-        robotToRemove.removeListener('updateRobot', this._robotUpdatedHandler);
-        robotToRemove.removeListener('statusMessage', this._robotStatusMessageUpdateHandler);
-        robotToRemove.removeListener('robotIntent', this._robotIntentHandler);
-        this.emit('updateRobots', this);
+        if (robotToRemove && robotToRemove.name) {
+            robotToRemove.removeListener('updateRobot', this._robotUpdatedHandler);
+            robotToRemove.removeListener('statusMessage', this._robotStatusMessageUpdateHandler);
+            robotToRemove.removeListener('robotIntent', this._robotIntentHandler);
+            this._robotMap.delete(name);
+            this.emit('updateRobots', this);
+        }
+
     }
 
     onUpdateStats(robot: Robot): void {
@@ -158,12 +157,20 @@ export default class Robots extends EventEmitter {
         this.emit('updateStats', this);
     }
 
-    getNextRobotInRobotList(robot: Robot): Robot {
-      let result: Robot = this.robotList[0];
-      let index: number = this.robotList.indexOf(robot);
-      if(index >= 0 && index < this.robotList.length - 1) {
-         result = this.robotList[index + 1]
-      }
-      return result;
+    getNextRobotInRobotList(robot: Robot): Robot | undefined {
+        let result: Robot | undefined = undefined;
+        const robotNames: string[] = this.robotNames;
+        if (robot && robotNames && robotNames.length > 0) {
+            robotNames.sort();
+            let index: number = robotNames.indexOf(robot.name);
+            if (index >= 0 && index < robotNames.length - 1) {
+                const nextName: string = robotNames[index + 1];
+                const nextRobot: Robot | undefined = this._robotMap.get(nextName);
+                if (nextRobot) {
+                    result = nextRobot;
+                }
+            }
+        }
+        return result;
     }
 }

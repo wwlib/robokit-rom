@@ -3,8 +3,7 @@ import { EventEmitter } from "events";
 import IRomApp from '../rom/IRomApp';
 import Robot, { RobotIntent } from './Robot';
 export default class Robots extends EventEmitter {
-    robotList: Robot[];
-    robotMap: Map<string, Robot>;
+    private _robotMap;
     lastUpdateTime: number;
     statusMessages: string;
     private _robotUpdatedHandler;
@@ -22,10 +21,12 @@ export default class Robots extends EventEmitter {
     get targetedRobots(): Robot[];
     get robotCount(): number;
     getRobotWithName(name: string): Robot | undefined;
+    get robotList(): Robot[];
+    getRobotListWithNames(names: string[]): Robot[] | undefined;
     connectRobot(robot: Robot, romApp: IRomApp): void;
     disconnectRobot(robot: Robot): void;
     addRobot(robot: Robot): void;
     removeRobot(robotToRemove: Robot): void;
     onUpdateStats(robot: Robot): void;
-    getNextRobotInRobotList(robot: Robot): Robot;
+    getNextRobotInRobotList(robot: Robot): Robot | undefined;
 }
