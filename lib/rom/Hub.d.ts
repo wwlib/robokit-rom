@@ -15,6 +15,12 @@ export interface NluData {
     intent: string;
     parameters: any;
 }
+export interface HubStats {
+    robotName: string;
+    skillNames: string[];
+    launchIntents: string[];
+    sessionId: string;
+}
 export default class Hub extends EventEmitter {
     robot: Robot;
     skillMap: Map<string, Skill | undefined>;
@@ -22,12 +28,17 @@ export default class Hub extends EventEmitter {
     hjToken: any;
     dialogflowController: DialogflowControllerV1;
     luisController: LUISController;
-    tickInterval: any;
-    startTickTime: number;
-    previousTickTime: number;
-    sessionId: string;
+    _sessionId: string;
+    private _tickFrequency;
+    private _tickInterval;
+    private _startTickTime;
+    private _previousTickTime;
     constructor(robot: Robot);
+    get tickFrequency(): number;
+    set tickFrequency(value: number);
     tick(): void;
+    clearTick(): void;
+    resetTick(): void;
     onRobotConnected(): void;
     onRobotDataStreamEvent(event: RobotDataStreamEvent): void;
     registerSkill(skill: Skill): void;
@@ -36,4 +47,6 @@ export default class Hub extends EventEmitter {
     getLaunchIntent(asr: string): Promise<any>;
     getIntent(asr: string, contexts: string[], nluType: string): Promise<NluData>;
     get robotSerialName(): string;
+    get sessionId(): string;
+    status(): HubStats;
 }

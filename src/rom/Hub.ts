@@ -29,6 +29,13 @@ export interface NluData {
     parameters: any;
 }
 
+export interface HubStats {
+    robotName: string;
+    skillNames: string[];
+    launchIntents: string[];
+    sessionId: string;
+}
+
 export default class Hub extends EventEmitter {
 
     public robot: Robot;
@@ -37,11 +44,12 @@ export default class Hub extends EventEmitter {
     public hjToken: any;
     public dialogflowController = new DialogflowControllerV1();
     public luisController = new LUISController();
-    public tickInterval: any;
-    public startTickTime: number;
-    public previousTickTime: number;
-    public sessionId: string = `robot_${Math.floor(Math.random() * 10000)}`;
+    public _sessionId: string = `robot_${Math.floor(Math.random() * 10000)}`;
 
+    private _tickFrequency: number = 1000;
+    private _tickInterval: any;
+    private _startTickTime: number;
+    private _previousTickTime: number;
 
     constructor(robot: Robot) {
         super ();
@@ -51,20 +59,42 @@ export default class Hub extends EventEmitter {
 
         PersistenceManager.Instance;
 
-        this.startTickTime = new Date().getTime();
-        this.previousTickTime = this.startTickTime;
-        this.tickInterval = setInterval(this.tick.bind(this), 1000);
+        this._startTickTime = new Date().getTime();
+        this._previousTickTime = this._startTickTime;
+        this.resetTick();
+    }
+
+    get tickFrequency(): number {
+        return this._tickFrequency;
+    }
+
+    set tickFrequency(value: number) {
+        this._tickFrequency = value;
+        this.resetTick();
     }
 
     tick(): void {
         this.skillMap.forEach((skill: Skill | undefined, key: string) => {
             if (skill && skill.running) {
                 let time: number = new Date().getTime();
-                let frameTime: number = time - this.previousTickTime;
-                let elapsedTime: number = time - this.startTickTime;
+                let frameTime: number = time - this._previousTickTime;
+                let elapsedTime: number = time - this._startTickTime;
+                this._previousTickTime = time;
                 skill.tick(frameTime, elapsedTime);
             }
         });
+    }
+
+    clearTick(): void {
+        if (this._tickInterval) {
+            clearInterval(this._tickInterval)
+            this._tickInterval = undefined;
+        }
+    }
+
+    resetTick(): void {
+        this.clearTick();
+        this._tickInterval = setInterval(this.tick.bind(this), this._tickFrequency);
     }
 
     onRobotConnected(): void {
@@ -172,7 +202,7 @@ export default class Hub extends EventEmitter {
                 if (contexts) {
                     context = contexts[0];
                 }
-                nluController.getIntentAndEntities(query, 'en-US', context, this.sessionId)
+                nluController.getIntentAndEntities(query, 'en-US', context, this._sessionId)
                     .then((intentAndEntities: NLUIntentAndEntities) => {
                         let nluData: NluData = {
                            nluType: nluType,
@@ -201,5 +231,18 @@ export default class Hub extends EventEmitter {
 
     get robotSerialName(): string {
         return this.robot.serialName;
+    }
+    
+    get sessionId(): string {
+        return this._sessionId;
+    }
+
+    status(): HubStats {
+        return {
+            robotName: this.robot ? this.robot.name : '',
+            skillNames: Array.from(this.skillMap.keys()),
+            launchIntents: Array.from(this.launchIntentMap.keys()),
+            sessionId: this._sessionId
+        }
     }
 }

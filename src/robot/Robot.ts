@@ -56,17 +56,62 @@ export interface RobotDataStreamEvent {
     data: any;
 }
 
+export enum RobotState {
+    IDLE,
+    LOGGING_IN,
+    LOGGED_IN,
+    LOGIN_ERROR,
+    REQUESTING_CERTIFICATE,
+    CERTIFICATE_ERROR,
+    CONNECTING,
+    CONNECTED,
+    CONNECT_ERROR,
+    DISCONNECTING,
+    DISCONNECTED,
+    DISCONNECT_ERROR,
+}
+
+export interface RobotStats {
+    name: string;
+    ip: string;
+    type: string;
+    serialName: string;
+    number: number;
+    connected: boolean;
+    targeted: boolean;
+    muted: boolean;
+    state: RobotState;
+    autoReconnect: boolean;
+    keepAlive: boolean;
+    connectErrorCount: number;
+    errorCount: number;
+    lastError: any;
+    trackingMotion: boolean;
+    trackingFaces: boolean;
+}
+
+export interface RobotError {
+    state: string;
+    error: string;
+    timestamp: number;
+}
+
 export default class Robot extends EventEmitter {
 
+    private _keepAliveFrequency: number = 60000;
+
+    private _state: RobotState;
     private _type: string = 'jibo';
     public name: string = '';
     public ip: string = '';
     public serialName: string = '';
     public email: string = '';
     public password: string = '';
-    public romApp: IRomApp | undefined;
+    
+    private _romApp: IRomApp | undefined;
 
     protected _connected: boolean;
+    protected _autoReconnect: boolean;
     protected _targeted: boolean;
     protected _robotConnection: JiboRobotConnection | RobokitConnection | undefined;
     protected _hub: Hub;
@@ -78,6 +123,10 @@ export default class Robot extends EventEmitter {
 
     private _stateData: any
     private _keepAliveInterval: any;
+
+    private _connectErrorCount: number = 0;
+
+    private _errors: RobotError[];
 
     constructor(options?: RobotData) {
         super();
@@ -91,9 +140,20 @@ export default class Robot extends EventEmitter {
         }
         this.initWithData(options);
         this._connected = false;
+        this._autoReconnect = false;
         this._targeted = false;
         this._hub = new Hub(this);
         this._stateData = {userId: '', userName: ''};
+        this._state = RobotState.IDLE;
+        this._errors = [];
+    }
+
+    get romApp(): IRomApp | undefined {
+        return this._romApp;
+    }
+
+    set romApp(value: IRomApp | undefined) {
+        this._romApp = value;
     }
 
     get type(): string {
@@ -102,6 +162,54 @@ export default class Robot extends EventEmitter {
 
     set type(typeString: string) {
         this._type = typeString;
+    }
+
+    get autoReconnect(): boolean {
+        return this._autoReconnect;
+    }
+
+    set autoReconnect(value: boolean) {
+        this._autoReconnect = value;
+    }
+
+    get keepAliveFrequency(): number {
+        return this._keepAliveFrequency;
+    }
+
+    set keepAliveFrequency(value: number) {
+        this._keepAliveFrequency = value;
+        this.resetKeepAlive();
+    }
+
+    get errors(): RobotError[] {
+        return this._errors;
+    }
+
+    private reportError(error: string, state?: RobotState) {
+        const errorState: RobotState = state || this._state;
+        const errorStateKey: string = RobotState[errorState];
+        const robotError: RobotError = {
+            state: errorStateKey,
+            error: error,
+            timestamp: new Date().getTime(),
+        }
+        this._errors.unshift(robotError);
+    }
+
+    get errorCount(): number {
+        return this._errors.length;
+    }
+
+    getLastError(count: number = 1): RobotError | RobotError[] {
+        let result: RobotError | RobotError[] = this._errors[0];
+        if (count > 1) {
+            result = this._errors.slice(0, count);
+        }
+        return result;
+    }
+
+    clearErrors() {
+        this._errors = [];
     }
 
     get hub(): Hub {
@@ -153,6 +261,7 @@ export default class Robot extends EventEmitter {
     }
 
     //// _stateData
+    // TODO: Rename StateData to ContextData
 
     updateUserData(userId: string, userName: string): void {
         this._stateData.userId = userId;
@@ -167,10 +276,12 @@ export default class Robot extends EventEmitter {
         this._stateData = Object.assign(this._stateData, data);
     }
 
+    // session Conext Data
     get stateData(): any {
         return this._stateData;
     }
 
+    // session Conext Data
     set stateData(data: any) {
         this._stateData = data;
     }
@@ -211,8 +322,8 @@ export default class Robot extends EventEmitter {
                         let prompt: string = command.data.prompt;
                         let contexts:string[] = command.data.contexts || [];
                         let nluDefault: string = 'none';
-                        if (this.romApp && this.romApp.nluDefault) {
-                            nluDefault = this.romApp.nluDefault;
+                        if (this._romApp && this._romApp.nluDefault) {
+                            nluDefault = this._romApp.nluDefault;
                         }
                         let nluType: string = command.data.nluType || nluDefault;
                         let p = this._robotConnection.requester.expression.say(prompt).complete;
@@ -465,27 +576,26 @@ export default class Robot extends EventEmitter {
 
     resetKeepAlive(): void {
         this.clearKeepAlive();
-        this._keepAliveInterval = setInterval(this.keepAlive.bind(this), 60000);
+        this._keepAliveInterval = setInterval(this.keepAlive.bind(this), this._keepAliveFrequency);
     }
 
     connect(romApp: IRomApp): void {
-        console.log(`connect:`, romApp);
-        this.romApp = romApp;
-        this.updateRobotStatusMessages(`Attempting to connect...`);
+        this._romApp = romApp;
         if (this._connected) {
             this.disconnect();
         }
+        this._state = RobotState.LOGGING_IN;
+        this.updateRobotStatusMessages(`Attempting to connect...`);
         let creds: JiboAccountCreds = {
-            clientId: romApp.clientId,
-            clientSecret: romApp.clientSecret,
+            clientId: this._romApp.clientId,
+            clientSecret: this._romApp.clientSecret,
             email: this.email,
             password: this.password,
         };
         this.loginToAccount(creds)
             .then((account: JiboAccount) => {
-                console.log(`connect: connected:`, account);
-                // let obj: any = account;
-                // console.log(obj, obj.constants);
+                this.updateRobotStatusMessages(`logged in`);
+                this._state = RobotState.LOGGED_IN;
                 this.getRobot(account, this.serialName)
                     .then((connection: JiboRobotConnection) => {
                         console.log(`connection:`, connection);
@@ -540,7 +650,6 @@ export default class Robot extends EventEmitter {
     }
 
     async getRobot(account: JiboAccount, name: string): Promise<JiboRobotConnection> {
-        process.stdout.write('Getting robot info... ');
         // Call the account.getRobots API to get a list of all robots associated with the account
         const robots = await account.getRobots();
         console.info('done');
@@ -556,17 +665,19 @@ export default class Robot extends EventEmitter {
     }
 
     disconnect(): void {
+        this._state = RobotState.DISCONNECTING;
         this.updateRobotStatusMessages(`Attempting to disconnect...`);
         try {
             if (this._connected && this._robotConnection) {
                 this._robotConnection.disconnect();
                 this._robotConnection = undefined;
+                this._connected = false;
+                this._state = RobotState.DISCONNECTED;
             }
         } catch (err) {
-            console.log(`Robot: disconnect: error:`, err);
+            this._state = RobotState.DISCONNECT_ERROR;
+            this.reportError(err);
         }
-
-        this._connected = false;
         this.clearKeepAlive();
     }
 
@@ -597,6 +708,31 @@ export default class Robot extends EventEmitter {
     mute(state: boolean = true): void {
         this._muted = state;
         console.log(`muted: `, this._muted);
+    }
+
+    status(): RobotStats {
+        const keepAlive: boolean = this._keepAliveInterval != undefined;
+        const trackingMotion: boolean = this._motionTrackToken != undefined;
+        const trackingFaces: boolean = this._faceTrackToken != undefined;
+
+        return {
+            name: this.name,
+            ip: this.ip,
+            type: this.type,
+            serialName: this.serialName,
+            number: this._number,
+            connected: this.connected,
+            targeted: this.targeted,
+            muted: this._muted,
+            state: this._state,
+            autoReconnect: this._autoReconnect,
+            keepAlive: keepAlive,
+            connectErrorCount: this._connectErrorCount,
+            errorCount: this.errorCount,
+            lastError: this.getLastError(),
+            trackingMotion: trackingMotion,
+            trackingFaces: trackingFaces,
+        }
     }
 
 }
