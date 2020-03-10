@@ -1,6 +1,6 @@
 import Neo4jController, { GraphConnection } from '../graph/neo4j/Neo4jController';
 // import { d3Types }  from '../neo4j/DataTypes';
-import ActivityParser from './ActivityParser';
+// import ActivityParser from './ActivityParser';
 import IRomApp from './IRomApp';
 import Robot from '../robot/Robot';
 import { Joke } from './JokeSkill';
@@ -36,7 +36,7 @@ export default class PersistenceManager {
     }
 
     public connect(romApp: IRomApp, force: boolean=false): void {
-        console.log(`PersistenceManager: connect: `, romApp);
+        // console.log(`PersistenceManager: connect: `);
         this.romApp = romApp;
         if (this.romApp && this.romApp.neo4jUrl && this.romApp.neo4jUser && this.romApp.neo4jPassword && (!this.neo4jController || force)) {
             this.graphConnection = {
@@ -45,7 +45,7 @@ export default class PersistenceManager {
                 user: this.romApp.neo4jUser,
                 password: this.romApp.neo4jPassword
             }
-            console.log(`PersistenceManager: connect: instantiating Neo4jController:`, this.graphConnection);
+            // console.log(`PersistenceManager: connect: instantiating Neo4jController:`, this.graphConnection);
             this.neo4jController = new Neo4jController(this.graphConnection);
         }
     }
@@ -60,10 +60,10 @@ WITH i, n MERGE (n)-[r:LAUNCHED {robot: "${robotId}", user: "${userId}", time: "
         if (this.neo4jController) {
             this.neo4jController.call(cypher, params)
                 .then((result: any) => {
-                    console.log(`PersistenceManager: persistLaunchIntent: `, result, cypher);
+                    // console.log(`PersistenceManager: persistLaunchIntent: `, result, cypher);
                 })
                 .catch((err: any) => {
-                    console.log(`PersistenceManager: persistLaunchIntent: err: `, err, cypher);
+                    // console.log(`PersistenceManager: persistLaunchIntent: err: `, err, cypher);
                 })
         }
     }
@@ -75,12 +75,12 @@ WITH i, n MERGE (n)-[r:LAUNCHED {robot: "${robotId}", user: "${userId}", time: "
             if (this.neo4jController) {
                 this.neo4jController.getCypherAsD3(cypher, params)
                     .then((result: any) => {
-                        console.log(`PersistenceManager: getActivity: `, result);
-                        let activityParser: ActivityParser = new ActivityParser(result);
-                        console.log(activityParser.events);
+                        // console.log(`PersistenceManager: getActivity: `, result);
+                        // let activityParser: ActivityParser = new ActivityParser(result);
+                        // console.log(activityParser.events);
                     })
                     .catch((err: any) => {
-                        console.log(`PersistenceManager: getActivity: err: `); //, err);
+                        // console.log(`PersistenceManager: getActivity: err: `); //, err);
                     })
             }
         })
@@ -95,10 +95,10 @@ WITH j, n MERGE (n)-[r:TOLD {robot: "${robot.name}", launchId: "${launchId}"}]->
         if (this.neo4jController) {
             this.neo4jController.call(cypher, params)
                 .then((result: any) => {
-                    console.log(`PersistenceManager: persistJoke: `, result, cypher);
+                    // console.log(`PersistenceManager: persistJoke: `, result, cypher);
                 })
                 .catch((err: any) => {
-                    console.log(`PersistenceManager: persistJoke: err: `, err, cypher);
+                    // console.log(`PersistenceManager: persistJoke: err: `, err, cypher);
                 })
         }
     }
@@ -112,10 +112,10 @@ WITH e, user MERGE (user)-[r:LIKES {robot: "${robot.name}", launchId: "${launchI
         if (this.neo4jController) {
             this.neo4jController.call(cypher, params)
                 .then((result: any) => {
-                    console.log(`PersistenceManager: persistUserLikesThing: `, result, cypher);
+                    // console.log(`PersistenceManager: persistUserLikesThing: `, result, cypher);
                 })
                 .catch((err: any) => {
-                    console.log(`PersistenceManager: persistUserLikesThing: err: `, err, cypher);
+                    // console.log(`PersistenceManager: persistUserLikesThing: err: `, err, cypher);
                 })
         }
     }

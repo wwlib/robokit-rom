@@ -24,7 +24,7 @@ export default class Robots extends EventEmitter {
         dataList.forEach((data: any) => {
             let robot: Robot;
             if (data.type == RobotType.robokit) {
-                console.log(`Robots: initWithData: new RobokitRobot()`);
+                // console.log(`Robots: initWithData: new RobokitRobot()`);
                 robot = new RobokitRobot();
             } else {
                 robot = new Robot();
@@ -75,6 +75,18 @@ export default class Robots extends EventEmitter {
     get robotNames(): string[] {
         const names: string[] = Array.from(this._robotMap.keys());
         return names;
+    }
+
+    get robotStates(): string[] {
+        const names: string[] = Array.from(this._robotMap.keys());
+        const states: any = {};
+        names.forEach((name: string) => {
+            const robot: Robot | undefined = this.getRobotWithName(name);
+            if (robot) {
+                states[name] = robot.stateName;
+            }
+        });
+        return states;
     }
 
     get connectedRobots(): Robot[] {
@@ -172,5 +184,12 @@ export default class Robots extends EventEmitter {
             }
         }
         return result;
+    }
+
+    status(): any {
+        return {
+            count: this.robotCount,
+            names: this.robotNames,
+        }
     }
 }

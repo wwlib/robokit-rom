@@ -28,7 +28,7 @@
     this.nodeDict = {};
     this.items = [];
     for (i = 0; i < boltResponse.records.length; i++) {
-        console.log(`Parsing node ${i}`);
+        // console.log(`Parsing node ${i}`);
       this.parseFields(boltResponse.records[i]._fields);
     }
     return this.items;
@@ -39,7 +39,7 @@
    */
   Parser.prototype.makeNode = function (field) {
     var id = this.getId(field);
-    console.log(`makeNode: ${id}`, field);
+    // console.log(`makeNode: ${id}`, field);
     var props = this.convertNumberProps(field.properties);
     if (!this.nodeDict[id]) {
       this.items.push({
@@ -95,7 +95,7 @@
 
   // Beware: IDs/identities in neo4j are unique to their type (so a node and link could have the same ID)
   Parser.prototype.parseFields = function (fields) {
-      console.log(`parseFields: `, fields);
+      // console.log(`parseFields: `, fields);
     var i, field, key;
     var neoIdDict = {};
     // first we parse the nodes
@@ -105,7 +105,7 @@
       var neoId = (isNode(field) ? 'node' : 'link') + field.identity.toString();
       neoIdDict[neoId] = isNode(field) ? this.makeNode(field) : field;
     }
-    console.log(neoIdDict);
+    // console.log(neoIdDict);
     // now we have valid node IDs and a dictionary, we can parse the links
     for (key in neoIdDict) {
       field = neoIdDict[key];

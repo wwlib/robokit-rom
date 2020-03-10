@@ -1,4 +1,4 @@
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 import Skill from './Skill';
 import Robot, { RobotIntentData, RobotDataStreamEvent } from '../robot/Robot';
 
@@ -40,7 +40,7 @@ export default class Hub extends EventEmitter {
 
     public robot: Robot;
     public skillMap: Map<string, Skill | undefined>;
-    public launchIntentMap: Map<string,  Skill | undefined>;
+    public launchIntentMap: Map<string, Skill | undefined>;
     public hjToken: any;
     public dialogflowController = new DialogflowControllerV1();
     public luisController = new LUISController();
@@ -52,7 +52,7 @@ export default class Hub extends EventEmitter {
     private _previousTickTime: number;
 
     constructor(robot: Robot) {
-        super ();
+        super();
         this.robot = robot;
         this.skillMap = new Map<string, Skill>();
         this.launchIntentMap = new Map<string, Skill>();
@@ -98,7 +98,6 @@ export default class Hub extends EventEmitter {
     }
 
     onRobotConnected(): void {
-        console.log(`HUB: onRobotConnected: ${this.robot.serialName}`, this.robot.requester);
         if (this.robot.requester && this.robot.requester.listen) {
             if (this.robot.romApp) {
                 PersistenceManager.Instance.connect(this.robot.romApp, true);
@@ -108,14 +107,18 @@ export default class Hub extends EventEmitter {
 
             this.hjToken = this.robot.requester.listen.subscribe.hotword();
             this.hjToken.hotWordHeard.on((speaker: any) => {
-                console.log("Heard Hotword from speaker: ",speaker);
+                this.robot.updateRobotStatusMessages('Heard Hotword from speaker:', 'HUB')
+                this.robot.updateRobotStatusMessages(speaker, 'HUB');
                 this.robot.resetKeepAlive();
                 if (this.robot.requester) {
                     let listenToken = this.robot.requester.listen.start();
                     listenToken.update.on((listenResultEvent: JIBO.v1.ListenResultEvent | undefined) => {
-                        console.log("Hey! I think i heard something: ", listenResultEvent);
+                        this.robot.updateRobotStatusMessages('Hey! I think i heard something:', 'HUB')
                         if (listenResultEvent) {
-                            let hotWordData: HotwordData = {speaker: speaker, listenResultEvent: listenResultEvent};
+                            this.robot.updateRobotStatusMessages(listenResultEvent.Speech, 'HUB');
+                        }
+                        if (listenResultEvent) {
+                            let hotWordData: HotwordData = { speaker: speaker, listenResultEvent: listenResultEvent };
                             this.onHotwordEvent(hotWordData)
                         }
                     });
@@ -139,7 +142,8 @@ export default class Hub extends EventEmitter {
     }
 
     registerSkill(skill: Skill): void {
-        console.log(`HUB: registerSkill: ${this.robot.serialName}`, skill);
+        this.robot.updateRobotStatusMessages('registerSkill', 'HUB')
+        this.robot.updateRobotStatusMessages(skill, 'HUB');
         this.skillMap.set(skill.id, skill);
         this.launchIntentMap.set(skill.launchIntent, skill);
     }
@@ -151,7 +155,8 @@ export default class Hub extends EventEmitter {
 
     onHotwordEvent(hotwordData: HotwordData): void {
         // get intent from asrTranscript
-        console.log(`HUB: onHotwordEvent: ${this.robot.serialName}`, hotwordData);
+        this.robot.updateRobotStatusMessages('onHotwordEvent', 'HUB')
+        this.robot.updateRobotStatusMessages(hotwordData, 'HUB');
         let userId: string = 'someone';
         let asr: string = hotwordData.listenResultEvent.Speech;
         this.getLaunchIntent(asr)
@@ -160,20 +165,23 @@ export default class Hub extends EventEmitter {
                     let launchIntent = nluData.intent;
                     let launchId: string = `${new Date().getTime()}`;
                     let skill: Skill | undefined = this.launchIntentMap.get(launchIntent);
-                    let robotIntentData: RobotIntentData = {nluType: nluData.nluType, asr: asr, intent: launchIntent, launchId: launchId, nluData: nluData, userId: userId};
-                    console.log(`HUB: onHotwordEvent: robotIntentData`, robotIntentData);
+                    let robotIntentData: RobotIntentData = { nluType: nluData.nluType, asr: asr, intent: launchIntent, launchId: launchId, nluData: nluData, userId: userId };
+                    this.robot.updateRobotStatusMessages('onHotwordEvent: robotIntentData', 'HUB')
+                    this.robot.updateRobotStatusMessages(robotIntentData, 'HUB');
                     if (skill) {
                         skill.launch(robotIntentData);
                         skill.running = true;
                         PersistenceManager.Instance.persistLaunchIntent(this.robot.name, userId, launchIntent, launchId);
                     } else {
-                        console.log(`HUB: onHotwordEvent: passing to robot onLaunchEvent: `, robotIntentData);
+                        this.robot.updateRobotStatusMessages('onHotwordEvent: passing to robot onLaunchEvent', 'HUB')
+                        this.robot.updateRobotStatusMessages(robotIntentData, 'HUB');
                         this.robot.onLaunchIntent(robotIntentData);
                     }
                 }
             })
             .catch((err: any) => {
-                console.log(`HUB: onHotwordEvent: error: `, err);
+                this.robot.updateRobotStatusMessagesError('onHotwordEvent: error', 'HUB')
+                this.robot.updateRobotStatusMessagesError(err, 'HUB');
             });
     }
 
@@ -187,7 +195,8 @@ export default class Hub extends EventEmitter {
     }
 
     getIntent(asr: string, contexts: string[], nluType: string): Promise<NluData> {
-        console.log(`HUB: getIntent: asr: ${asr}, ${nluType}, contexts: `, contexts);
+        this.robot.updateRobotStatusMessages(`getIntent: asr: ${asr}, ${nluType}, contexts:`, 'HUB')
+        this.robot.updateRobotStatusMessages(contexts, 'HUB');
         return new Promise((resolve, reject) => {
             let query: string = asr;
             let nluController: NLUController | undefined = undefined;
@@ -205,13 +214,14 @@ export default class Hub extends EventEmitter {
                 nluController.getIntentAndEntities(query, 'en-US', context, this._sessionId)
                     .then((intentAndEntities: NLUIntentAndEntities) => {
                         let nluData: NluData = {
-                           nluType: nluType,
-                           asr: asr,
-                           intent: intentAndEntities.intent,
-                           parameters: intentAndEntities.entities
-                       }
-                       console.log(`HUB: getIntent: nluData`, nluData);
-                       resolve(nluData);
+                            nluType: nluType,
+                            asr: asr,
+                            intent: intentAndEntities.intent,
+                            parameters: intentAndEntities.entities
+                        }
+                        this.robot.updateRobotStatusMessages(`getIntent: nluData`, 'HUB')
+                        this.robot.updateRobotStatusMessages(nluData, 'HUB');
+                        resolve(nluData);
                     })
                     .catch((err: any) => {
                         reject(err);
@@ -223,7 +233,8 @@ export default class Hub extends EventEmitter {
                     intent: '',
                     parameters: {}
                 }
-                console.log(`HUB: getIntent: NO NLU DEFINED: nluData`, nluData);
+                this.robot.updateRobotStatusMessages(`getIntent: NO NLU DEFINED: nluData`, 'HUB')
+                this.robot.updateRobotStatusMessages(nluData, 'HUB');
                 resolve(nluData)
             }
         });
@@ -232,7 +243,7 @@ export default class Hub extends EventEmitter {
     get robotSerialName(): string {
         return this.robot.serialName;
     }
-    
+
     get sessionId(): string {
         return this._sessionId;
     }

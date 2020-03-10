@@ -1,4 +1,5 @@
 import { sum } from './sum';
+import Logger from './Logger';
 import IRomApp from './rom/IRomApp';
 import RomCommand, { RomCommandData } from './rom/RomCommand';
 import RomCommands from './rom/RomCommands';
@@ -23,6 +24,7 @@ import PersistenceManager from './rom/PersistenceManager';
 
 export {
     sum,
+    Logger,
     IRomApp,
     RomCommand,
     RomCommandData,

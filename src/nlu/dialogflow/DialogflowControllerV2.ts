@@ -79,7 +79,7 @@ export default class DialogflowControllerV2 extends NLUController {
           this.sessionClient = new dialogflow.SessionsClient(clientConfig);
           // console.log(this.sessionClient);
       } else {
-          console.log(`DialogflowControllerV2: set config: error: incomplete config:`, config);
+        // console.log(`DialogflowControllerV2: set config: error: incomplete config:`, config);
       }
   }
 
@@ -120,9 +120,9 @@ export default class DialogflowControllerV2 extends NLUController {
               // console.log(`  Query: ${result.queryText}`);
               // console.log(`  Response: ${result.fulfillmentText}`);
               // if (result.intent) {
-              //   console.log(`  Intent: ${result.intent.displayName}`);
+              //  console.log(`  Intent: ${result.intent.displayName}`);
               // } else {
-              //   console.log(`  No intent matched.`);
+              //  console.log(`  No intent matched.`);
               // }
               resolve(result);
             })

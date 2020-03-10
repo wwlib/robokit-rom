@@ -15,7 +15,7 @@ export default class JokeSkill extends Skill {
 
     constructor(robot: Robot) {
         super(robot, 'JokeSkill', 'launchJoke');
-        console.log(`JokeSkill: constructor: ${robot.serialName}`);
+        // console.log(`JokeSkill: constructor: ${robot.serialName}`);
         this.initJokes();
     }
 
@@ -38,7 +38,7 @@ export default class JokeSkill extends Skill {
 
     launch(data: RobotIntentData) :void {
         if (this.robot) {
-            console.log(`JokeSkill: launch: ${this.robot.serialName}`);
+            // console.log(`JokeSkill: launch: ${this.robot.serialName}`);
             let joke: Joke = this.jokeIterator.next().value;
             if (!joke) {
                 this.jokeIterator = this.jokeMap.values();
@@ -66,7 +66,7 @@ export default class JokeSkill extends Skill {
                 })
             }
         } else {
-            console.log(`JokeSkill: launch: error: robot is undefined`);
+            // console.log(`JokeSkill: launch: error: robot is undefined`);
         }
 
     }

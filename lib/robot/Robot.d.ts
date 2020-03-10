@@ -41,18 +41,24 @@ export interface RobotDataStreamEvent {
     data: any;
 }
 export declare enum RobotState {
-    IDLE = 0,
-    LOGGING_IN = 1,
-    LOGGED_IN = 2,
-    LOGIN_ERROR = 3,
-    REQUESTING_CERTIFICATE = 4,
-    CERTIFICATE_ERROR = 5,
-    CONNECTING = 6,
-    CONNECTED = 7,
-    CONNECT_ERROR = 8,
-    DISCONNECTING = 9,
-    DISCONNECTED = 10,
-    DISCONNECT_ERROR = 11
+    INIT = 0,
+    IDLE = 1,
+    LOGGING_IN = 2,
+    LOGGED_IN = 3,
+    LOGIN_ERROR = 4,
+    GETTING_ROBOT = 5,
+    GOT_ROBOT = 6,
+    GET_ROBOT_ERROR = 7,
+    REQUESTING_CERTIFICATE = 8,
+    RECEIVED_CERTIFICATE = 9,
+    CERTIFICATE_ERROR = 10,
+    CONNECTING = 11,
+    CONNECTED = 12,
+    CONNECT_ERROR = 13,
+    DISCONNECTING = 14,
+    DISCONNECT_ERROR = 15,
+    MAX_CONNECT_ERRORS = 16,
+    FUNKY = 17
 }
 export interface RobotStats {
     name: string;
@@ -63,7 +69,7 @@ export interface RobotStats {
     connected: boolean;
     targeted: boolean;
     muted: boolean;
-    state: RobotState;
+    state: string;
     autoReconnect: boolean;
     keepAlive: boolean;
     connectErrorCount: number;
@@ -71,6 +77,7 @@ export interface RobotStats {
     lastError: any;
     trackingMotion: boolean;
     trackingFaces: boolean;
+    aliveTime: number;
 }
 export interface RobotError {
     state: string;
@@ -98,7 +105,12 @@ export default class Robot extends EventEmitter {
     private _faceTrackToken;
     private _stateData;
     private _keepAliveInterval;
+    private _startTime;
+    private _reconnectCooldownStart;
+    private _reconnectCooldownDuration;
+    private _reconnectCooldownTimeout;
     private _connectErrorCount;
+    private _maxConnectErrors;
     private _errors;
     constructor(options?: RobotData);
     get romApp(): IRomApp | undefined;
@@ -110,13 +122,20 @@ export default class Robot extends EventEmitter {
     get keepAliveFrequency(): number;
     set keepAliveFrequency(value: number);
     get errors(): RobotError[];
+    get maxConnectErrors(): number;
+    set maxConnectErrors(value: number);
     private reportError;
     get errorCount(): number;
     getLastError(count?: number): RobotError | RobotError[];
     clearErrors(): void;
+    setState(state: RobotState): void;
+    get state(): RobotState;
+    get stateName(): string;
     get hub(): Hub;
     initWithData(data: RobotData): void;
-    updateRobotStatusMessages(message: string, subsystem?: string, clearMessages?: boolean): string;
+    updateRobotStatusMessagesWithType(type: 'info' | 'error', message: string | Object, subsystem?: string, clearMessages?: boolean): void;
+    updateRobotStatusMessages(message: string | Object, subsystem?: string, clearMessages?: boolean): void;
+    updateRobotStatusMessagesError(message: string | Object, subsystem?: string, clearMessages?: boolean): void;
     get number(): number;
     set number(number: number);
     get json(): RobotData;
@@ -132,8 +151,14 @@ export default class Robot extends EventEmitter {
     clearKeepAlive(): void;
     resetKeepAlive(): void;
     connect(romApp: IRomApp): void;
+    get reconnectCooldownDuration(): number;
+    set reconnectCooldownDuration(value: number);
+    get reconnectCooldownTimeRemaining(): number;
+    reconnectAfterCooldown(resetCooldown?: boolean): void;
+    tryReconnect(): void;
     loginToAccount(creds: JiboAccountCreds): Promise<JiboAccount>;
     getRobot(account: JiboAccount, name: string): Promise<JiboRobotConnection>;
+    handleOnDisconnected(): void;
     disconnect(): void;
     get connected(): boolean;
     get targeted(): boolean;

@@ -5,12 +5,12 @@ export default class ClockSkill extends Skill {
 
     constructor(robot: Robot) {
         super(robot, 'clockSkill', 'launchClock');
-        console.log(`ClockSkill: constructor: ${robot.serialName}`);
+        // console.log(`ClockSkill: constructor: ${robot.serialName}`);
     }
 
     launch(data: RobotIntentData) :void {
         if (this.robot) {
-            console.log(`ClockSkill: launch: ${this.robot.serialName}`);
+            // console.log(`ClockSkill: launch: ${this.robot.serialName}`);
             let time: Date = new Date();
             let hours: number = time.getHours(); //'9';
             if (hours > 12) {
@@ -31,7 +31,7 @@ export default class ClockSkill extends Skill {
                 })
             }
         } else {
-            console.log(`ClockSkill: launch: error: robot is undefined`);
+            // console.log(`ClockSkill: launch: error: robot is undefined`);
         }
 
     }

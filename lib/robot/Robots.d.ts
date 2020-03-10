@@ -17,6 +17,7 @@ export default class Robots extends EventEmitter {
     updateRobotsStatusMessages(message: string, subsystem?: string, clearMessages?: boolean): string;
     get json(): any;
     get robotNames(): string[];
+    get robotStates(): string[];
     get connectedRobots(): Robot[];
     get targetedRobots(): Robot[];
     get robotCount(): number;
@@ -29,4 +30,5 @@ export default class Robots extends EventEmitter {
     removeRobot(robotToRemove: Robot): void;
     onUpdateStats(robot: Robot): void;
     getNextRobotInRobotList(robot: Robot): Robot | undefined;
+    status(): any;
 }

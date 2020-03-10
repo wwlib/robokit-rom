@@ -97,14 +97,14 @@ export default class RobokitConnection extends EventEmitter {
             try {
                 this.webSocket.close();
             } catch (e) {
-                console.log(e);
+                // console.log(e);
             }
             this.webSocket = null;
         }
     }
 
     startWebSocket() {
-        console.log(`startWebSocket: ${this.connectionString}`);
+        // console.log(`startWebSocket: ${this.connectionString}`);
         this.disconnect();
         try {
 
@@ -120,7 +120,7 @@ export default class RobokitConnection extends EventEmitter {
                     // The method should return undefined if the servername and
                     // certificate are valid
                     var expected_cert_common_name = 'TBD';
-                    console.log(`certificate.subject.CN:`, certificate.subject.CN);
+                    // console.log(`certificate.subject.CN:`, certificate.subject.CN);
 
                     if (certificate.subject.CN !== expected_cert_common_name) {
                         throw Error("Certificate CN doesn't match expected CN: " + expected_cert_common_name);
@@ -157,7 +157,7 @@ export default class RobokitConnection extends EventEmitter {
 
             this.webSocket.on('error', (e: any) => {
                 this.emit('error', e);
-                console.log(`error:`, e);
+                // console.log(`error:`, e);
             });
 
             this.webSocket.on('open', () => {
@@ -178,7 +178,7 @@ export default class RobokitConnection extends EventEmitter {
                 try {
                     json = JSON.parse(message);
                 } catch (e) {
-                    console.log('websocket onMessage: JSON.parse: ', e);
+                    // console.log('websocket onMessage: JSON.parse: ', e);
                     json = null;
                 }
                 if (json) {
@@ -189,19 +189,19 @@ export default class RobokitConnection extends EventEmitter {
             });
 
             this.webSocket.on('close', () => {
-                console.log('websocket client closed')
+                // console.log('websocket client closed')
                 this.webSocket = undefined;
                 this.emit('closed');
             });
 
         } catch (err) {
             this.webSocket = undefined;
-            console.log(err);
+            // console.log(err);
         }
     }
 
     sendTransactionMessageData(messageData: TransactionMessageData): AsyncToken<any> {
-        console.log(`sendTransactionMessageData:`, messageData);
+        // console.log(`sendTransactionMessageData:`, messageData);
         const token: AsyncToken<any> = new AsyncToken<any>();
         messageData.client = 'robocommander';
         let message: any = {
@@ -212,7 +212,7 @@ export default class RobokitConnection extends EventEmitter {
             if (this.webSocket) {
                 let messageString: string = JSON.stringify(message);
                 this.webSocket.send(messageString);
-                // TOTO actually handle async transaction responses to reslove
+                // TODO actually handle async transaction responses to reslove
                 setTimeout(() => {console.log(`resolving`); resolve()}, 1000); // simulate async response for now
                 // resolve();
             } else {
@@ -223,7 +223,7 @@ export default class RobokitConnection extends EventEmitter {
     }
     
     sendHandshakeMessage(payload: HandshakeMessagePayload): AsyncToken<any> {
-        console.log(`sendHandshakeMessage:`, payload);
+        // console.log(`sendHandshakeMessage:`, payload);
         const token: AsyncToken<any> = new AsyncToken<any>();
         let currentTime: number = new Date().getTime();
         let handshakeMessage: HandshakeMessage = {
@@ -260,7 +260,7 @@ export default class RobokitConnection extends EventEmitter {
     }
 
     onRomEvent(message: any) {
-        console.log(`onRomEvent: message:`, message);
+        // console.log(`onRomEvent: message:`, message);
         switch (message.data.event) {
             case 'hotword':
                 this.onHotWordToken.emit('hotWordHeard');

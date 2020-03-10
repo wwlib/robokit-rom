@@ -51,7 +51,7 @@ export default class LUISController extends NLUController {
              this.luisAppId = this._config.nluLUISAppId;
              this.subscriptionKey = this._config.nluLUISSubscriptionKey;
          } else {
-             console.log(`LUISController: set config: error: incomplete config:`, config);
+            //  console.log(`LUISController: set config: error: incomplete config:`, config);
          }
      }
 
@@ -72,10 +72,10 @@ export default class LUISController extends NLUController {
             request(luisRequest,
                 ((error: string, response: any, body: any) => {
                     if (error) {
-                        console.log(`LUISController: call: error:`, response, error);
+                        // console.log(`LUISController: call: error:`, response, error);
                         reject(error);
                     } else {
-                        console.log(`LUISController: call:`, response, error);
+                        // console.log(`LUISController: call:`, response, error);
                         let body_obj: any = JSON.parse(body);
                         resolve(body_obj);
                     }

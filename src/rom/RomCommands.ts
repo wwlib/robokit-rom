@@ -89,7 +89,7 @@ export default class RomCommands {
     }
 
     removeCommand(commandToRemove: RomCommand): void {
-        console.log(`RomCommands: removeCommand: ${commandToRemove.name}`);
+        // console.log(`RomCommands: removeCommand: ${commandToRemove.name}`);
         let tempCommandList: RomCommand[] = [];
         let tempCommandMap: Map<string, RomCommand> = new Map<string, RomCommand>();
         let tempKeyCodeMap: Map<string, RomCommand> = new Map<string, RomCommand>();

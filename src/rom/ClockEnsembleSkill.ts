@@ -9,7 +9,7 @@ export default class ClockEnsembleSkill extends EnsembleSkill {
     }
 
     launch(data: RobotIntentData) :void {
-        console.log(`ClockEnsembleSkill: launch: running: ${this.running}`);
+        // console.log(`ClockEnsembleSkill: launch: running: ${this.running}`);
         if (!this.running) {
             this.running = true;
             let hubArray: Hub[] = this.getShuffledArrayOfHubs();

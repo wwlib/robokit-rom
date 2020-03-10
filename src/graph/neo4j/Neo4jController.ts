@@ -18,7 +18,7 @@ export default class Neo4jController {
         try {
             this.driver = neo4j.driver(connection.url, neo4j.auth.basic(connection.user, connection.password));
         } catch (err) {
-            console.log(`Neo4jController: constructor: `, err);
+            // console.log(`Neo4jController: constructor: `, err);
             this.driver = undefined;
         }
 
@@ -84,10 +84,10 @@ export default class Neo4jController {
     test() {
         this.call('MATCH (n) return n LIMIT 10')
             .then(result => {
-                console.log(result);
+                // console.log(result);
             })
             .catch(error => {
-                console.log(error);
+                // console.log(error);
             })
     }
 }
