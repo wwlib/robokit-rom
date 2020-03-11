@@ -5,6 +5,7 @@ import Robot, { RobotIntentData, RobotDataStreamEvent } from '../robot/Robot';
 import NLUController, {
     NLUIntentAndEntities
 } from './NLUController';
+import NodeNlpController from '../nlu/node-nlp/NodeNlpController';
 import LUISController from '../nlu/luis/LUISController';
 import DialogflowControllerV1 from '../nlu/dialogflow/DialogflowControllerV1';
 // import DialogflowControllerV2 from '../nlu/dialogflow/DialogflowControllerV2';
@@ -42,6 +43,7 @@ export default class Hub extends EventEmitter {
     public skillMap: Map<string, Skill | undefined>;
     public launchIntentMap: Map<string, Skill | undefined>;
     public hjToken: any;
+    public nodeNlpController: NodeNlpController = new NodeNlpController();
     public dialogflowController = new DialogflowControllerV1();
     public luisController = new LUISController();
     public _sessionId: string = `robot_${Math.floor(Math.random() * 10000)}`;
@@ -200,10 +202,12 @@ export default class Hub extends EventEmitter {
         return new Promise((resolve, reject) => {
             let query: string = asr;
             let nluController: NLUController | undefined = undefined;
-            if (nluType == 'luis') {
+            if (nluType === 'luis') {
                 nluController = this.luisController;
-            } else if (nluType == 'dialogflow') {
+            } else if (nluType === 'dialogflow') {
                 nluController = this.dialogflowController;
+            } else if (nluType === 'node-nlp' || nluType === 'default' || nluType === 'simple' || !nluType){
+                nluController = this.nodeNlpController;
             }
 
             if (nluController) {

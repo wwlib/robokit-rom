@@ -11,7 +11,6 @@ export default class Logger {
 
     static setLogDirectory(dir: string) {
         Logger._logDir = path.resolve(dir);
-        console.log('setLogDirectory:', dir, Logger._logDir);
         Logger._logErrors =  true;
         Logger._logInfo =  true;
     }

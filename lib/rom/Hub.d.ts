@@ -3,6 +3,7 @@
 import { EventEmitter } from "events";
 import Skill from './Skill';
 import Robot, { RobotDataStreamEvent } from '../robot/Robot';
+import NodeNlpController from '../nlu/node-nlp/NodeNlpController';
 import LUISController from '../nlu/luis/LUISController';
 import DialogflowControllerV1 from '../nlu/dialogflow/DialogflowControllerV1';
 export interface HotwordData {
@@ -26,6 +27,7 @@ export default class Hub extends EventEmitter {
     skillMap: Map<string, Skill | undefined>;
     launchIntentMap: Map<string, Skill | undefined>;
     hjToken: any;
+    nodeNlpController: NodeNlpController;
     dialogflowController: DialogflowControllerV1;
     luisController: LUISController;
     _sessionId: string;

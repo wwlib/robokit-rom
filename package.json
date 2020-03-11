@@ -21,7 +21,8 @@
     "@jibo/apptoolkit-library": "^0.1.5",
     "fs-extra": "^8.1.0",
     "ip": "^1.1.5",
-    "neo4j-driver": "^4.0.1"
+    "neo4j-driver": "^4.0.1",
+    "node-nlp": "^4.2.1"
   },
   "devDependencies": {
     "@types/jest": "^25.1.3",

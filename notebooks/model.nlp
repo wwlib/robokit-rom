@@ -1,0 +1,831 @@
+{
+  "settings": {
+    "languages": [
+      "en"
+    ],
+    "tag": "nlp",
+    "threshold": 0.5,
+    "autoLoad": true,
+    "autoSave": true,
+    "modelFileName": "model.nlp"
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "en"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "en": {
+        "settings": {
+          "locale": "en",
+          "tag": "domain-manager-en",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "trainByDomain": false,
+          "useStemDict": true
+        },
+        "stemDict": {
+          "is,it,time,what": {
+            "intent": "launchClock",
+            "domain": "default"
+          },
+          "is,the,time,what": {
+            "intent": "launchClock",
+            "domain": "default"
+          },
+          "a,joke,me,tell": {
+            "intent": "launchJoke",
+            "domain": "default"
+          },
+          "a,joke,tell,us": {
+            "intent": "launchJoke",
+            "domain": "default"
+          },
+          "ani,do,joke,know,you": {
+            "intent": "launchJoke",
+            "domain": "default"
+          },
+          "a,hear,is,joke,let": {
+            "intent": "launchJoke",
+            "domain": "default"
+          },
+          "are,who,you": {
+            "intent": "launchIdent",
+            "domain": "default"
+          },
+          "is,name,what,your": {
+            "intent": "launchIdent",
+            "domain": "default"
+          },
+          "face,my,track": {
+            "intent": "launchFaces",
+            "domain": "default"
+          },
+          "face,my,watch": {
+            "intent": "launchFaces",
+            "domain": "default"
+          },
+          "me,watch": {
+            "intent": "launchFaces",
+            "domain": "default"
+          },
+          "a,give,me,report,status": {
+            "intent": "launchStatus",
+            "domain": "default"
+          },
+          "is,status,what,your": {
+            "intent": "launchStatus",
+            "domain": "default"
+          },
+          "andrew,is,it": {
+            "intent": "launchGreeting",
+            "domain": "default"
+          },
+          "is,it,martin,me": {
+            "intent": "launchGreeting",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "launchClock": "default",
+          "launchJoke": "default",
+          "launchIdent": "default",
+          "launchFaces": "default",
+          "launchStatus": "default",
+          "launchGreeting": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "what time is it",
+            "intent": "launchClock"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is the time",
+            "intent": "launchClock"
+          },
+          {
+            "domain": "default",
+            "utterance": "what's the time",
+            "intent": "launchClock"
+          },
+          {
+            "domain": "default",
+            "utterance": "tell me a joke",
+            "intent": "launchJoke"
+          },
+          {
+            "domain": "default",
+            "utterance": "tell us a joke",
+            "intent": "launchJoke"
+          },
+          {
+            "domain": "default",
+            "utterance": "do you know any jokes",
+            "intent": "launchJoke"
+          },
+          {
+            "domain": "default",
+            "utterance": "let's hear a joke",
+            "intent": "launchJoke"
+          },
+          {
+            "domain": "default",
+            "utterance": "who are you",
+            "intent": "launchIdent"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is your name",
+            "intent": "launchIdent"
+          },
+          {
+            "domain": "default",
+            "utterance": "what's your name",
+            "intent": "launchIdent"
+          },
+          {
+            "domain": "default",
+            "utterance": "track my face",
+            "intent": "launchFaces"
+          },
+          {
+            "domain": "default",
+            "utterance": "watch my face",
+            "intent": "launchFaces"
+          },
+          {
+            "domain": "default",
+            "utterance": "watch me",
+            "intent": "launchFaces"
+          },
+          {
+            "domain": "default",
+            "utterance": "track my face",
+            "intent": "launchFaces"
+          },
+          {
+            "domain": "default",
+            "utterance": "give me a status report",
+            "intent": "launchStatus"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is your status",
+            "intent": "launchStatus"
+          },
+          {
+            "domain": "default",
+            "utterance": "what's your status",
+            "intent": "launchStatus"
+          },
+          {
+            "domain": "default",
+            "utterance": "it's andrew",
+            "intent": "launchGreeting"
+          },
+          {
+            "domain": "default",
+            "utterance": "it's me, martin",
+            "intent": "launchGreeting"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "en",
+              "tag": "nlu-en",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "what": 1,
+              "time": 1,
+              "is": 1,
+              "it": 1,
+              "the": 1,
+              "tell": 1,
+              "me": 1,
+              "a": 1,
+              "joke": 1,
+              "us": 1,
+              "do": 1,
+              "you": 1,
+              "know": 1,
+              "ani": 1,
+              "let": 1,
+              "hear": 1,
+              "who": 1,
+              "are": 1,
+              "your": 1,
+              "name": 1,
+              "track": 1,
+              "my": 1,
+              "face": 1,
+              "watch": 1,
+              "give": 1,
+              "status": 1,
+              "report": 1,
+              "andrew": 1,
+              "martin": 1
+            },
+            "intents": {
+              "launchClock": 1,
+              "launchJoke": 1,
+              "launchIdent": 1,
+              "launchFaces": 1,
+              "launchStatus": 1,
+              "launchGreeting": 1
+            },
+            "intentFeatures": {
+              "launchClock": [
+                "what",
+                "time",
+                "is",
+                "it",
+                "the"
+              ],
+              "launchJoke": [
+                "tell",
+                "me",
+                "a",
+                "joke",
+                "us",
+                "do",
+                "you",
+                "know",
+                "ani",
+                "let",
+                "is",
+                "hear"
+              ],
+              "launchIdent": [
+                "who",
+                "are",
+                "you",
+                "what",
+                "is",
+                "your",
+                "name"
+              ],
+              "launchFaces": [
+                "track",
+                "my",
+                "face",
+                "watch",
+                "me"
+              ],
+              "launchStatus": [
+                "give",
+                "me",
+                "a",
+                "status",
+                "report",
+                "what",
+                "is",
+                "your"
+              ],
+              "launchGreeting": [
+                "it",
+                "is",
+                "andrew",
+                "me",
+                "martin"
+              ]
+            },
+            "featuresToIntent": {
+              "what": [
+                "launchClock",
+                "launchIdent",
+                "launchStatus"
+              ],
+              "time": [
+                "launchClock"
+              ],
+              "is": [
+                "launchClock",
+                "launchJoke",
+                "launchIdent",
+                "launchStatus",
+                "launchGreeting"
+              ],
+              "it": [
+                "launchClock",
+                "launchGreeting"
+              ],
+              "the": [
+                "launchClock"
+              ],
+              "tell": [
+                "launchJoke"
+              ],
+              "me": [
+                "launchJoke",
+                "launchFaces",
+                "launchStatus",
+                "launchGreeting"
+              ],
+              "a": [
+                "launchJoke",
+                "launchStatus"
+              ],
+              "joke": [
+                "launchJoke"
+              ],
+              "us": [
+                "launchJoke"
+              ],
+              "do": [
+                "launchJoke"
+              ],
+              "you": [
+                "launchJoke",
+                "launchIdent"
+              ],
+              "know": [
+                "launchJoke"
+              ],
+              "ani": [
+                "launchJoke"
+              ],
+              "let": [
+                "launchJoke"
+              ],
+              "hear": [
+                "launchJoke"
+              ],
+              "who": [
+                "launchIdent"
+              ],
+              "are": [
+                "launchIdent"
+              ],
+              "your": [
+                "launchIdent",
+                "launchStatus"
+              ],
+              "name": [
+                "launchIdent"
+              ],
+              "track": [
+                "launchFaces"
+              ],
+              "my": [
+                "launchFaces"
+              ],
+              "face": [
+                "launchFaces"
+              ],
+              "watch": [
+                "launchFaces"
+              ],
+              "give": [
+                "launchStatus"
+              ],
+              "status": [
+                "launchStatus"
+              ],
+              "report": [
+                "launchStatus"
+              ],
+              "andrew": [
+                "launchGreeting"
+              ],
+              "martin": [
+                "launchGreeting"
+              ]
+            },
+            "neuralNetwork": {
+              "features": [
+                "what",
+                "time",
+                "is",
+                "it",
+                "the",
+                "tell",
+                "me",
+                "a",
+                "joke",
+                "us",
+                "do",
+                "you",
+                "know",
+                "ani",
+                "let",
+                "hear",
+                "who",
+                "are",
+                "your",
+                "name",
+                "track",
+                "my",
+                "face",
+                "watch",
+                "give",
+                "status",
+                "report",
+                "andrew",
+                "martin",
+                "nonefeature"
+              ],
+              "intents": [
+                "launchClock",
+                "launchJoke",
+                "launchIdent",
+                "launchFaces",
+                "launchStatus",
+                "launchGreeting",
+                "None"
+              ],
+              "perceptrons": [
+                [
+                  3.7300031185150146,
+                  6.598414421081543,
+                  0.4057495892047882,
+                  1.7660516500473022,
+                  1.9243496656417847,
+                  -0.24498595297336578,
+                  -1.097016453742981,
+                  -0.6612266898155212,
+                  -0.7678828239440918,
+                  -0.10706078261137009,
+                  -0.10665610432624817,
+                  -0.24340306222438812,
+                  -0.10665610432624817,
+                  -0.10665610432624817,
+                  -0.41624075174331665,
+                  -0.41624075174331665,
+                  -0.13674694299697876,
+                  -0.13674694299697876,
+                  -2.868410348892212,
+                  -1.7299307584762573,
+                  -0.09534115344285965,
+                  -0.15197598934173584,
+                  -0.15197598934173584,
+                  -0.08944563567638397,
+                  0,
+                  -1.1384800672531128,
+                  0,
+                  -1.9817324876785278,
+                  -0.9262807965278625,
+                  -0.020700206980109215,
+                  -0.14484548291069066
+                ],
+                [
+                  -0.6806520819664001,
+                  -0.16467714309692383,
+                  0.1601058691740036,
+                  -0.6569103598594666,
+                  -0.13178877532482147,
+                  2.7379727363586426,
+                  0.2535023093223572,
+                  2.973724126815796,
+                  5.917915344238281,
+                  0.41934239864349365,
+                  1.715161681175232,
+                  0.9200024008750916,
+                  1.715161681175232,
+                  1.715161681175232,
+                  1.4647804498672485,
+                  1.4647804498672485,
+                  -0.7951591610908508,
+                  -0.7951591610908508,
+                  -0.5159749388694763,
+                  -0.4673599600791931,
+                  -0.2787364423274994,
+                  -0.4384625554084778,
+                  -0.4384625554084778,
+                  -0.7325774431228638,
+                  -1.229028344154358,
+                  -1.2776433229446411,
+                  -1.229028344154358,
+                  -0.36077383160591125,
+                  -0.2632482945919037,
+                  -0.5548047423362732,
+                  0.5110783816739106
+                ],
+                [
+                  1.0890105962753296,
+                  -1.4745608568191528,
+                  0.4578772783279419,
+                  -1.05864679813385,
+                  -0.9847792983055115,
+                  -0.05157707259058952,
+                  -0.5739853382110596,
+                  -0.21976560354232788,
+                  -1.1127703189849854,
+                  -0.05157707259058952,
+                  -0.9989253282546997,
+                  3.1964633464813232,
+                  -0.9989253282546997,
+                  -0.9989253282546997,
+                  -0.06226798892021179,
+                  -0.06226798892021179,
+                  4.195388317108154,
+                  4.195388317108154,
+                  2.5635721683502197,
+                  7.478719234466553,
+                  -0.29776036739349365,
+                  -0.45980289578437805,
+                  -0.45980289578437805,
+                  -0.4854607582092285,
+                  -0.10592056065797806,
+                  -5.021066665649414,
+                  -0.10592056065797806,
+                  -0.4242188632488251,
+                  -0.14464661478996277,
+                  -0.8934997320175171,
+                  0.9095645261142671
+                ],
+                [
+                  -0.41839876770973206,
+                  -0.12991316616535187,
+                  -2.348404884338379,
+                  -1.9447811841964722,
+                  -0.11513830721378326,
+                  -1.5752142667770386,
+                  4.2375407218933105,
+                  -2.6217997074127197,
+                  -1.7663100957870483,
+                  -0.06546598672866821,
+                  -0.19109569489955902,
+                  -0.7328435778617859,
+                  -0.19109569489955902,
+                  -0.19109569489955902,
+                  0,
+                  0,
+                  -0.5417478680610657,
+                  -0.5417478680610657,
+                  -0.2884856164455414,
+                  0,
+                  5.196403503417969,
+                  2.6410155296325684,
+                  2.6410155296325684,
+                  5.938991546630859,
+                  -1.0465850830078125,
+                  -1.3350708484649658,
+                  -1.0465850830078125,
+                  -0.22950336337089539,
+                  -1.7005029916763306,
+                  -1.7630051374435425,
+                  1.8318835193189391
+                ],
+                [
+                  1.1764471530914307,
+                  -1.5598719120025635,
+                  0.09863489866256714,
+                  -1.3730626106262207,
+                  -0.9635313749313354,
+                  -0.6915627717971802,
+                  0.22642280161380768,
+                  0.6005717515945435,
+                  -1.0156737565994263,
+                  -0.15945930778980255,
+                  -0.02302096039056778,
+                  -0.133303701877594,
+                  -0.02302096039056778,
+                  -0.02302096039056778,
+                  -0.3010900020599365,
+                  -0.3010900020599365,
+                  -0.11028273403644562,
+                  -0.11028273403644562,
+                  2.7363195419311523,
+                  -4.083866119384766,
+                  -0.04039161279797554,
+                  -0.04986727982759476,
+                  -0.04986727982759476,
+                  -0.39430609345436096,
+                  1.5932245254516602,
+                  8.413409233093262,
+                  1.5932245254516602,
+                  -0.3268541991710663,
+                  -0.44986793398857117,
+                  -0.28369128704071045,
+                  0.07433336298513331
+                ],
+                [
+                  -4.10435676574707,
+                  -3.798495292663574,
+                  3.197983741760254,
+                  4.474974155426025,
+                  -0.3713996112346649,
+                  -0.39261898398399353,
+                  1.250389814376831,
+                  -1.2235093116760254,
+                  -1.0167081356048584,
+                  -0.0027896889951080084,
+                  -0.024361636489629745,
+                  -0.13271507620811462,
+                  -0.024361636489629745,
+                  -0.024361636489629745,
+                  -0.5997278690338135,
+                  -0.5997278690338135,
+                  -0.10835344344377518,
+                  -0.10835344344377518,
+                  -0.3058614432811737,
+                  -0.30190879106521606,
+                  -0.09839332103729248,
+                  -0.12483146041631699,
+                  -0.12483146041631699,
+                  -1.4875487089157104,
+                  -0.23116296529769897,
+                  -0.23511558771133423,
+                  -0.23116296529769897,
+                  4.569576740264893,
+                  3.332491874694824,
+                  -0.3671014904975891,
+                  0.24434070667186542
+                ],
+                [
+                  -0.6794514060020447,
+                  -0.353652685880661,
+                  -1.2496916055679321,
+                  -0.6807621121406555,
+                  -0.21913284063339233,
+                  -0.5428041815757751,
+                  -1.2810887098312378,
+                  -0.7340956926345825,
+                  -0.8036520481109619,
+                  -0.41076380014419556,
+                  -0.2368491291999817,
+                  -0.9858284592628479,
+                  -0.2368491291999817,
+                  -0.2368491291999817,
+                  -0.023998888209462166,
+                  -0.023998888209462166,
+                  -0.7489793300628662,
+                  -0.7489793300628662,
+                  -0.32579872012138367,
+                  -0.2546479105949402,
+                  -0.700649619102478,
+                  -0.8947458267211914,
+                  -0.8947458267211914,
+                  -1.175851583480835,
+                  -0.16729271411895752,
+                  -0.23844356834888458,
+                  -0.16729271411895752,
+                  -0.5462421774864197,
+                  0,
+                  9.816581726074219,
+                  2.502375798852402
+                ]
+              ],
+              "perceptronSettings": {
+                "locale": "en",
+                "tag": "nlu-en",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "en",
+        "what time is it"
+      ],
+      [
+        "en",
+        "what is the time"
+      ],
+      [
+        "en",
+        "what's the time"
+      ],
+      [
+        "en",
+        "tell me a joke"
+      ],
+      [
+        "en",
+        "tell us a joke"
+      ],
+      [
+        "en",
+        "do you know any jokes"
+      ],
+      [
+        "en",
+        "let's hear a joke"
+      ],
+      [
+        "en",
+        "who are you"
+      ],
+      [
+        "en",
+        "what is your name"
+      ],
+      [
+        "en",
+        "what's your name"
+      ],
+      [
+        "en",
+        "track my face"
+      ],
+      [
+        "en",
+        "watch my face"
+      ],
+      [
+        "en",
+        "watch me"
+      ],
+      [
+        "en",
+        "track my face"
+      ],
+      [
+        "en",
+        "give me a status report"
+      ],
+      [
+        "en",
+        "what is your status"
+      ],
+      [
+        "en",
+        "what's your status"
+      ],
+      [
+        "en",
+        "it's andrew"
+      ],
+      [
+        "en",
+        "it's me, martin"
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner",
+      "entityPreffix": "%",
+      "entitySuffix": "%"
+    },
+    "rules": {
+      "en": {
+        "user": {
+          "name": "user",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "Andrew",
+              "texts": [
+                "Andrew",
+                "Andy"
+              ]
+            },
+            {
+              "option": "Martin",
+              "texts": [
+                "Martin"
+              ]
+            },
+            {
+              "option": "Jesus",
+              "texts": [
+                "Jesus"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {}
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {}
+}
