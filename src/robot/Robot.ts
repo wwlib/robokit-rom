@@ -97,6 +97,7 @@ export interface RobotStats {
     trackingMotion: boolean;
     trackingFaces: boolean;
     aliveTime: number;
+    hubStats: any;
 }
 
 export interface RobotError {
@@ -687,9 +688,10 @@ export default class Robot extends EventEmitter {
                             .catch((err: Error) => {
                                 this.updateRobotStatusMessagesError('Robot: this._robotConnection.connect(): catch:');
                                 this.updateRobotStatusMessagesError(err.message);
-                                // Redundant?: Not needed. Handled by status events.
-                                // this.setState(RobotState.CONNECT_ERROR);
-                                // this.handleOnConnectError();
+                                if (err && err.message === 'Failed to retrieve certificate') {
+                                    this.setState(RobotState.CONNECT_ERROR);
+                                    this.handleOnConnectError();
+                                }
                             })
                     })
                     .catch((err: any) => {
@@ -751,18 +753,17 @@ export default class Robot extends EventEmitter {
         }
     }
 
-    //// Redundant?: Not needed. Handled by status events.
-    // handleOnConnectError() {
-    //     this.updateRobotStatusMessages('Robot: handleOnConnectError');
-    //     if (this._robotConnection) {
-    //         this._robotConnection.removeAllListeners();
-    //         this._robotConnection = undefined;
-    //     }
-    //     this._connected = false;
-    //     this._connectErrorCount += 1;
-    //     this.setState(RobotState.IDLE);
-    //     this.tryReconnect();
-    // }
+    handleOnConnectError() {
+        this.updateRobotStatusMessages('Robot: handleOnConnectError');
+        if (this._robotConnection) {
+            this._robotConnection.removeAllListeners();
+            this._robotConnection = undefined;
+        }
+        this._connected = false;
+        this._connectErrorCount += 1;
+        this.setState(RobotState.IDLE);
+        this.tryReconnect();
+    }
 
     async loginToAccount(creds: JiboAccountCreds): Promise<JiboAccount> {
         let account: JiboAccount = new JiboAccount(creds);
@@ -857,6 +858,7 @@ export default class Robot extends EventEmitter {
         const keepAlive: boolean = this._keepAliveInterval != undefined;
         const trackingMotion: boolean = this._motionTrackToken != undefined;
         const trackingFaces: boolean = this._faceTrackToken != undefined;
+        const hubStats: any = this.hub ? this.hub.status() : {};
 
         return {
             name: this.name,
@@ -876,6 +878,7 @@ export default class Robot extends EventEmitter {
             trackingMotion: trackingMotion,
             trackingFaces: trackingFaces,
             aliveTime: new Date().getTime() - this._startTime,
+            hubStats: hubStats
         }
     }
 

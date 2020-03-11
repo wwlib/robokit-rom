@@ -78,6 +78,7 @@ export interface RobotStats {
     trackingMotion: boolean;
     trackingFaces: boolean;
     aliveTime: number;
+    hubStats: any;
 }
 export interface RobotError {
     state: string;
@@ -156,6 +157,7 @@ export default class Robot extends EventEmitter {
     get reconnectCooldownTimeRemaining(): number;
     reconnectAfterCooldown(resetCooldown?: boolean): void;
     tryReconnect(): void;
+    handleOnConnectError(): void;
     loginToAccount(creds: JiboAccountCreds): Promise<JiboAccount>;
     getRobot(account: JiboAccount, name: string): Promise<JiboRobotConnection>;
     handleOnDisconnected(): void;
